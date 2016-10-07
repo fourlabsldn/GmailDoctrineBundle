@@ -1,0 +1,38 @@
+{
+  "name": "fourlabs/gmail-doctrine-bundle",
+  "version": "1.0",
+  "description": "Doctrine Implementation of fourlabs/gmail-bundle",
+  "license": "MIT",
+  "homepage": "https://github.com/fourlabsldn/GmailBundle",
+  "keywords": [
+    "PHP","Gmail API", "Gmail Bundle", "Symfony"
+  ],
+  "authors": [
+    {
+      "name": "Four Labs",
+      "email": "luis@fourlabs.co.uk",
+      "homepage": "https://fourlabs.co.uk/"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "symfony/http-foundation": "~2.8|~3.0|~3.1",
+    "symfony/console": "~2.8|~3.0|~3.1",
+    "symfony/validator": "~2.8|~3.0|~3.1",
+    "symfony/form": "~2.8|~3.0|~3.1",
+    "symfony/options-resolver": "~2.8|~3.0|~3.1",
+    "symfony/config": "~2.8|~3.0|~3.1",
+    "symfony/dependency-injection": "~2.8|~3.0|~3.1",
+    "symfony/http-kernel": "~2.8|~3.0|~3.1",
+    "symfony/routing": "~2.8|~3.0|~3.1",
+    "symfony/doctrine-bridge": "~2.8|~3.0|~3.1",
+    "doctrine/orm": "2.6.x-dev",
+    "doctrine/common": "2.6.x-dev",
+    "fourlabs/gmail-bundle": "*.*@dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "FL\\GmailDoctrineBundle\\": ""
+    }
+  }
+}
