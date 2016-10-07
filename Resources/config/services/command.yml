@@ -1,0 +1,5 @@
+services:
+    app.command.sync:
+        class: FL\GmailDoctrineBundle\Command\SyncCommand
+        arguments:
+            - "@app.sync_wrapper"

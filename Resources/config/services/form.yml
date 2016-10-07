@@ -1,0 +1,17 @@
+services:
+    app.form.settings:
+        class: FL\GmailDoctrineBundle\Form\SyncSettingType
+        tags:
+            - { name: form.type }
+        arguments:
+            - "@fl_gmail.oauth"
+            - "@fl_gmail.directory"
+            - "@fl_gmail.sync_manager"
+    app.type.from:
+        class: FL\GmailDoctrineBundle\Form\Type\FromType
+        tags:
+            - { name: form.type }
+        arguments:
+            - "@fl_gmail.oauth"
+            - "@fl_gmail.directory"
+            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:SyncSetting')"

@@ -1,0 +1,31 @@
+services:
+    app.listener.gmail_history_updated:
+        class: FL\GmailDoctrineBundle\EventListener\GmailHistoryUpdatedListener
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:GmailHistory')"
+        tags:
+            - { name: kernel.event_listener, event: fl_gmail.gmail_history.updated, method: onGmailHistoryUpdated }
+    app.listener.gmail_sync_end:
+        class: FL\GmailDoctrineBundle\EventListener\GmailSyncEndListener
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:GmailMessage')"
+            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:GmailLabel')"
+        tags:
+            - { name: kernel.event_listener, event: fl_gmail.sync.end, method: onSyncEnd }
+    app.listener.sync_setting:
+        class: FL\GmailDoctrineBundle\EventListener\SyncSettingListener
+        arguments: # cannot pass repositories directly, because of circular reference in doctrine
+            - "%fl_gmail.gmail_message_class%"
+            - "%fl_gmail.gmail_label_class%"
+            - "%fl_gmail.gmail_history_class%"
+        tags:
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
+    app.listener.gmail_api_message:
+        class: FL\GmailDoctrineBundle\EventListener\GmailMessageSentListener
+        arguments:
+            - "@app.sync_wrapper"
+        tags:
+            - { name: 'swiftmailer.fl_gmail_api_mailer.plugin'}
