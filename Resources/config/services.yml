@@ -1,5 +1,4 @@
 imports:
-    - { resource: 'services/actions.yml' }
     - { resource: 'services/command.yml' }
     - { resource: 'services/form.yml' }
     - { resource: 'services/listeners.yml' }
@@ -11,5 +10,5 @@ services:
             - "@fl_gmail.sync_manager"
             - "@fl_gmail.oauth"
             - "@fl_gmail.directory"
-            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:GmailHistory')"
-            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:SyncSetting')"
+            - "@=service('doctrine').getRepository('GmailDoctrineBundle:GmailHistory')"
+            - "@=service('doctrine').getRepository('GmailDoctrineBundle:SyncSetting')"

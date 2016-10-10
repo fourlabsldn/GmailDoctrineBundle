@@ -3,15 +3,15 @@ services:
         class: FL\GmailDoctrineBundle\EventListener\GmailHistoryUpdatedListener
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:GmailHistory')"
+            - "@=service('doctrine').getRepository('GmailDoctrineBundle:GmailHistory')"
         tags:
             - { name: kernel.event_listener, event: fl_gmail.gmail_history.updated, method: onGmailHistoryUpdated }
     app.listener.gmail_sync_end:
         class: FL\GmailDoctrineBundle\EventListener\GmailSyncEndListener
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:GmailMessage')"
-            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:GmailLabel')"
+            - "@=service('doctrine').getRepository('GmailDoctrineBundle:GmailMessage')"
+            - "@=service('doctrine').getRepository('GmailDoctrineBundle:GmailLabel')"
         tags:
             - { name: kernel.event_listener, event: fl_gmail.sync.end, method: onSyncEnd }
     app.listener.sync_setting:

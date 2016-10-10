@@ -14,4 +14,4 @@ services:
         arguments:
             - "@fl_gmail.oauth"
             - "@fl_gmail.directory"
-            - "@=service('doctrine').getRepository('FL\GmailDoctrineBundle:SyncSetting')"
+            - "@=service('doctrine').getRepository('GmailDoctrineBundle:SyncSetting')"
