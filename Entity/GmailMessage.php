@@ -38,6 +38,10 @@ class GmailMessage extends BaseGmailMessage
     /**
      * @ORM\Column(type="string", nullable=true)
      * @var string
+     * Not being used for anything at the moment.
+     * Nevertheless, since each message has a unique historyId for its corresponding userId,
+     * this historyId can be useful in the event that the latest historyId is not available elsewhere.
+     * In this case, the latest historyId is simply the historyId with the largest value.
      */
     protected $historyId;
 
