@@ -6,6 +6,7 @@ use FL\GmailDoctrineBundle\Entity\SyncSetting;
 use Doctrine\ORM\EntityRepository;
 use FL\GmailBundle\Services\Directory;
 use FL\GmailBundle\Services\OAuth;
+use FL\GmailDoctrineBundle\Exception\MissingSyncSettingException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -45,7 +46,7 @@ class FromType extends AbstractType
                 }
             }
         } else {
-            throw new \RuntimeException("No " . SyncSetting::class . " persisted yet.");
+            throw new MissingSyncSettingException("No " . SyncSetting::class . " persisted yet.");
         }
 
         $this->emailChoices = $emailChoices;
