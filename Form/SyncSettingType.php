@@ -24,6 +24,7 @@ class SyncSettingType extends AbstractType
         $builder->add('userIds', InboxType::class, [
             'multiple'=>true,
             'expanded'=>true,
+            'label'=>'Users To Sync'
         ]);
     }
 
