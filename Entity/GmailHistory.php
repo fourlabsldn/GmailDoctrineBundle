@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Store the historyId of the most recent email for this user
  * whenever a sync is executed. This way in the future it can be synced
  * from that point onwards.
- * @ORM\Entity(repositoryClass="FL\GmailDoctrineBundle\Entity\GmailHistoryRepository")
+ * @ORM\MappedSuperclass
  */
 class GmailHistory extends BaseGmailHistory
 {

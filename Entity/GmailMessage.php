@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Stores the relevant fields of Gmail Message, including its labels.
- * @ORM\Entity(repositoryClass="FL\GmailDoctrineBundle\Entity\GmailMessageRepository")
+ * @ORM\MappedSuperclass
  */
 class GmailMessage extends BaseGmailMessage
 {

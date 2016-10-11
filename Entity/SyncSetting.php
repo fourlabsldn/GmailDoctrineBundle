@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Store the userIds that should be synced
- * @ORM\Entity(repositoryClass="\FL\GmailDoctrineBundle\Entity\SyncSettingRepository")
+ * @ORM\MappedSuperclass
  */
 class SyncSetting
 {
@@ -17,14 +17,14 @@ class SyncSetting
      * @Assert\NotBlank()
      * @var string
      */
-    private $domain;
+    protected $domain;
 
     /**
      * @ORM\Column(type="array", nullable=false)
      * @Assert\NotBlank()
      * @var string[]
      */
-    private $userIds;
+    protected $userIds;
 
     /**
      * @return string|null

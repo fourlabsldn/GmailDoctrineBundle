@@ -9,7 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Stores labels applied to Gmail Messages.
- * @ORM\Entity(repositoryClass="FL\GmailDoctrineBundle\Entity\GmailLabelRepository")
+ * @ORM\MappedSuperclass
  * @UniqueEntity(
  *     fields = {"name", "userId"},
  *     errorPath = "name",
