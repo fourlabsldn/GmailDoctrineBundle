@@ -25,8 +25,8 @@ class SendEmailType extends AbstractType
     {
         $builder
             ->add('from', FromType::class, ['required'=>true])
-            ->add('to', TextType::class, ['required'=>false])
-            ->add('subject', TextType::class, ['required'=>false])
+            ->add('to', TextType::class, ['required'=>true])
+            ->add('subject', TextType::class, ['required'=>true])
             ->add('threadId', TextType::class, ['required'=>false])
             ->add('body_html', TextareaType::class, ['required'=>false])
             ->add('body_plain_text', TextareaType::class, ['required'=>false])
