@@ -10,7 +10,7 @@ services:
         class: FL\GmailDoctrineBundle\EventListener\GmailSyncEndListener
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "%fl_gmail.gmail_message_class%%"
+            - "%fl_gmail.gmail_message_class%"
             - "%fl_gmail.gmail_label_class%"
         tags:
             - { name: kernel.event_listener, event: fl_gmail.sync.end, method: onSyncEnd }
