@@ -2,8 +2,8 @@
 
 namespace FL\GmailDoctrineBundle\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FL\GmailDoctrineBundle\Entity\SyncSetting;
-use Doctrine\ORM\EntityRepository;
 use FL\GmailBundle\Services\Directory;
 use FL\GmailBundle\Services\OAuth;
 use FL\GmailDoctrineBundle\Exception\MissingSyncSettingException;
@@ -19,7 +19,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class FromType extends AbstractType
 {
-
     /**
      * @var string[]
      */
@@ -29,13 +28,14 @@ class FromType extends AbstractType
      * InboxType constructor.
      * @param OAuth $oAuth
      * @param Directory $directory
-     * @param EntityRepository $syncSettingRepository
+     * @param EntityManagerInterface $entityManager
+     * @param string $syncSettingClass
      */
-    public function __construct(OAuth $oAuth, Directory $directory, EntityRepository $syncSettingRepository)
+    public function __construct(OAuth $oAuth, Directory $directory, EntityManagerInterface $entityManager, string $syncSettingClass)
     {
         $domain = $oAuth->resolveDomain();
         $emailChoices = [];
-        $syncSetting = $syncSettingRepository->findOneBy(['domain'=>$domain]);
+        $syncSetting = $entityManager->getRepository($syncSettingClass)->findOneBy(['domain'=>$domain]);
 
         if ($syncSetting instanceof SyncSetting) {
             foreach ($syncSetting->getUserIds() as $userId) {

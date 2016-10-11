@@ -32,14 +32,14 @@ class GmailSyncEndListener
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param EntityRepository $messageRepository
-     * @param EntityRepository $labelRepository
+     * @param string $messageClass
+     * @param string $labelClass
      */
-    public function __construct(EntityManagerInterface $entityManager, EntityRepository $messageRepository, EntityRepository $labelRepository)
+    public function __construct(EntityManagerInterface $entityManager, string $messageClass, string $labelClass)
     {
         $this->entityManager = $entityManager;
-        $this->messageRepository = $messageRepository;
-        $this->labelRepository = $labelRepository;
+        $this->messageRepository = $entityManager->getRepository($messageClass);
+        $this->labelRepository = $entityManager->getRepository($labelClass);
     }
 
     /**

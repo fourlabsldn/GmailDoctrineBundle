@@ -26,12 +26,12 @@ class GmailHistoryUpdatedListener
     /**
      * GmailHistoryUpdatedListener constructor.
      * @param EntityManagerInterface $entityManager
-     * @param EntityRepository $historyRepository
+     * @param string $historyClass
      */
-    public function __construct(EntityManagerInterface $entityManager, EntityRepository $historyRepository)
+    public function __construct(EntityManagerInterface $entityManager, string $historyClass)
     {
         $this->entityManager = $entityManager;
-        $this->historyRepository = $historyRepository;
+        $this->historyRepository = $entityManager->getRepository($historyClass);
     }
 
     /**

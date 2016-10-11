@@ -2,6 +2,7 @@
 
 namespace FL\GmailDoctrineBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FL\GmailDoctrineBundle\Entity\GmailHistory;
 use FL\GmailDoctrineBundle\Entity\SyncSetting;
 use Doctrine\ORM\EntityRepository;
@@ -46,16 +47,23 @@ class SyncWrapper
      * @param SyncManager $syncManager
      * @param OAuth $oAuth
      * @param Directory $directory
-     * @param EntityRepository $historyRepository
-     * @param EntityRepository $syncSettingRepository
+     * @param EntityManagerInterface $entityManager
+     * @param string $historyClass
+     * @param string $syncSettingClass
      */
-    public function __construct(SyncManager $syncManager, OAuth $oAuth, Directory $directory, EntityRepository $historyRepository, EntityRepository $syncSettingRepository)
-    {
+    public function __construct(
+        SyncManager $syncManager,
+        OAuth $oAuth,
+        Directory $directory,
+        EntityManagerInterface $entityManager,
+        string $historyClass,
+        string $syncSettingClass
+    ) {
         $this->syncManager = $syncManager;
         $this->oAuth = $oAuth;
         $this->directory = $directory;
-        $this->historyRepository = $historyRepository;
-        $this->syncSettingRepository = $syncSettingRepository;
+        $this->historyRepository = $entityManager->getRepository($historyClass);
+        $this->syncSettingRepository = $entityManager->getRepository($syncSettingClass);
     }
 
     /**

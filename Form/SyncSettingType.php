@@ -14,6 +14,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SyncSettingType extends AbstractType
 {
+    /**
+     * @var string
+     */
+    private $syncSettingClass;
+
+    /**
+     * @param string $syncSettingClass
+     */
+    public function __construct(string $syncSettingClass)
+    {
+        $this->syncSettingClass = $syncSettingClass;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -33,6 +45,6 @@ class SyncSettingType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['data_class' => SyncSetting::class, ]);
+        $resolver->setDefaults(['data_class' => $this->syncSettingClass]);
     }
 }

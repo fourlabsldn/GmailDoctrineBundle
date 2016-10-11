@@ -4,9 +4,7 @@ services:
         tags:
             - { name: form.type }
         arguments:
-            - "@fl_gmail.oauth"
-            - "@fl_gmail.directory"
-            - "@fl_gmail.sync_manager"
+            - "%fl_gmail_doctrine.sync_setting_class%"
     app.type.from:
         class: FL\GmailDoctrineBundle\Form\Type\FromType
         tags:
@@ -14,4 +12,5 @@ services:
         arguments:
             - "@fl_gmail.oauth"
             - "@fl_gmail.directory"
-            - "@=service('doctrine').getRepository('GmailDoctrineBundle:SyncSetting')"
+            - "@doctrine.orm.entity_manager"
+            - "%fl_gmail_doctrine.sync_setting_class%"

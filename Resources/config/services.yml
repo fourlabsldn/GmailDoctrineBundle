@@ -10,5 +10,6 @@ services:
             - "@fl_gmail.sync_manager"
             - "@fl_gmail.oauth"
             - "@fl_gmail.directory"
-            - "@=service('doctrine').getRepository('GmailDoctrineBundle:GmailHistory')"
-            - "@=service('doctrine').getRepository('GmailDoctrineBundle:SyncSetting')"
+            - "@doctrine.orm.entity_manager"
+            - "%fl_gmail.gmail_history_class%"
+            - "%fl_gmail_doctrine.sync_setting_class%"
