@@ -2,6 +2,7 @@
 
 namespace FL\GmailDoctrineBundle\Model;
 
+use FL\GmailBundle\Swift\SwiftGmailMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -41,6 +42,11 @@ class SendEmail
      * @Assert\NotBlank()
      */
     private $bodyPlainText;
+
+    /**
+     * @var string|null
+     */
+    private $threadId = null;
 
     /**
      * @return string|null
@@ -138,16 +144,36 @@ class SendEmail
     }
 
     /**
-     * @param SendEmail $sendEmail
-     * @return \Swift_Message
+     * @return string|null
      */
-    final public static function convertToSwiftMessage(SendEmail $sendEmail)
+    public function getThreadId()
     {
-        $swiftMessage = \Swift_Message::newInstance($sendEmail->getSubject());
+        return $this->threadId;
+    }
+
+    /**
+     * @param string|null $threadId
+     * @return SendEmail
+     */
+    public function setThreadId($threadId): SendEmail
+    {
+        $this->threadId = $threadId;
+
+        return $this;
+    }
+
+    /**
+     * @param SendEmail $sendEmail
+     * @return SwiftGmailMessage
+     */
+    final public static function convertToSwiftGmailMessage(SendEmail $sendEmail)
+    {
+        $swiftMessage = SwiftGmailMessage::newInstance($sendEmail->getSubject());
         $swiftMessage->setBody($sendEmail->getBodyHtml(), 'text/html');
         $swiftMessage->addPart($sendEmail->getBodyPlainText(), 'text/plain');
         $swiftMessage->setFrom($sendEmail->getFrom());
         $swiftMessage->setTo($sendEmail->getTo());
+        $swiftMessage->setThreadId($sendEmail->getThreadId());
 
         return $swiftMessage;
     }

@@ -27,6 +27,7 @@ class SendEmailType extends AbstractType
             ->add('from', FromType::class, ['required'=>false])
             ->add('to', TextType::class, ['required'=>false])
             ->add('subject', TextType::class, ['required'=>false])
+            ->add('threadId', TextType::class, ['required'=>false])
             ->add('body_html', TextareaType::class, ['required'=>false])
             ->add('body_plain_text', TextareaType::class, ['required'=>false])
         ;
