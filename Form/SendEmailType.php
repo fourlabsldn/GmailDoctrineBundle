@@ -24,7 +24,7 @@ class SendEmailType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('from', FromType::class, ['required'=>false])
+            ->add('from', FromType::class, ['required'=>true])
             ->add('to', TextType::class, ['required'=>false])
             ->add('subject', TextType::class, ['required'=>false])
             ->add('threadId', TextType::class, ['required'=>false])
