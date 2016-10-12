@@ -67,7 +67,7 @@ class GmailMessage extends BaseGmailMessage
     protected $from;
 
     /**
-     * @ORM\Column(type="datetimetz", nullable=false)
+     * @ORM\Column(type="datetime", nullable=false)
      * @Assert\NotNull
      * @var \DateTimeInterface
      */
@@ -159,7 +159,7 @@ class GmailMessage extends BaseGmailMessage
     {
         $criteria = Criteria::create();
         $criteria->where(Criteria::expr()->eq('name', $name));
-        return (count($this->labels->matching($criteria)) > 0);
+        return ($this->labels->matching($criteria)->count() > 0);
     }
 
     /**
