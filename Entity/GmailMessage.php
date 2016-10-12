@@ -149,12 +149,9 @@ class GmailMessage extends BaseGmailMessage
     }
 
     /**
-     * Returns true if the message has the specified label, false otherwise.
      * @param string $name
      * @return bool
      */
-    // NOTE: If this will be used for anything other than isUnread and isDeleted,
-    // the $name string will have to be cleaned up.
     public function hasLabel(string $name): bool
     {
         $criteria = Criteria::create();
@@ -163,7 +160,25 @@ class GmailMessage extends BaseGmailMessage
     }
 
     /**
-     * Return whether this message is unread.
+     * @param string $name
+     * @return bool
+     */
+    public function doesNotHaveLabel(string $name): bool
+    {
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->neq('name', $name));
+        return ($this->labels->matching($criteria)->count() > 0);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRead(): bool
+    {
+        return $this->doesNotHaveLabel('UNREAD');
+    }
+
+    /**
      * @return bool
      */
     public function isUnread(): bool
@@ -172,11 +187,34 @@ class GmailMessage extends BaseGmailMessage
     }
 
     /**
-     * Return whether this message is deleted.
      * @return bool
      */
-    public function isDeleted(): bool
+    public function isInbox(): bool
+    {
+        return $this->hasLabel('INBOX');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSent(): bool
+    {
+        return $this->hasLabel('SENT');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrash(): bool
     {
         return $this->hasLabel('TRASH');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotTrash(): bool
+    {
+        return $this->doesNotHaveLabel('TRASH');
     }
 }
