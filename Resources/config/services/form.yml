@@ -1,11 +1,11 @@
 services:
-    app.form.settings:
+    fl_gmail_doctrine.form.settings:
         class: FL\GmailDoctrineBundle\Form\SyncSettingType
         tags:
             - { name: form.type }
         arguments:
             - "%fl_gmail_doctrine.sync_setting_class%"
-    app.type.from:
+    fl_gmail_doctrine.type.from:
         class: FL\GmailDoctrineBundle\Form\Type\FromType
         tags:
             - { name: form.type }

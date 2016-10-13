@@ -4,7 +4,7 @@ imports:
     - { resource: 'services/listeners.yml' }
 
 services:
-    app.sync_wrapper:
+    fl_gmail_doctrine.sync_wrapper:
         class: FL\GmailDoctrineBundle\Services\SyncWrapper
         arguments:
             - "@fl_gmail.sync_manager"
