@@ -64,7 +64,7 @@ class  GmailMessageRepository extends EntityRepository
             }
             $dql = rtrim($dql, ' OR ');
             $dql .= ')';
-            $this->uniqueByThreadSortClause($dql, $dateSort);
+            $this->uniqueByThreadSortClause($dql, 'message.sentAt', $dateSort);
             return $this->getEntityManager()->createQuery($dql)->setParameters($parameters)->getResult();
         }
         return [];
@@ -139,7 +139,7 @@ class  GmailMessageRepository extends EntityRepository
         $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, $labelNames, $notLabelNames, $from, $to);
         $dql .= ' GROUP BY message.threadId, message.userId ';
 
-        $this->uniqueByThreadSortClause($dql, $dateSort);
+        $this->uniqueByThreadSortClause($dql, 'latestSentAt', $dateSort);
 
         $queryThreadIds = $this->getEntityManager()->createQuery($dql)->setParameters($parameters);
 
@@ -212,19 +212,20 @@ class  GmailMessageRepository extends EntityRepository
 
     /**
      * @param string $dql
+     * @param string $fieldName
      * @param string $dateSort
      */
     private function uniqueByThreadSortClause(
         string &$dql,
+        string $fieldName,
         string $dateSort = null
-    )
-    {
+    ) {
         switch ($dateSort) {
             case 'ASC':
-                $dql .= ' ORDER BY latestSentAt ASC';
+                $dql .= sprintf(' ORDER BY %s ASC', $fieldName);
                 break;
             case 'DESC':
-                $dql .= ' ORDER BY latestSentAt DESC';
+                $dql .= sprintf(' ORDER BY %s DESC', $fieldName);
                 break;
             case null:
                 // avoid the exception and don't sort
