@@ -22,19 +22,31 @@ class  GmailMessageRepository extends EntityRepository
      * @param string|null $dateSort
      * @param string|null $userId
      * @param string[]|null $labelNames
+     * @param string[]|null $notLabelNames
      * @param string|null $from
      * @param string|null $to
      *
      * @return GmailMessageInterface[]
      */
-    public function findUniqueByThread(int $limit = null, int $offset = null, string $dateSort = null, string $userId = null, array $labelNames = null, string $from = null, string $to = null) {
-        $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $userId, $labelNames);
+    public function findUniqueByThread(
+        int $limit = null,
+        int $offset = null,
+        string $dateSort = null,
+        string $userId = null,
+        array $labelNames = null,
+        array $notLabelNames = null,
+        string $from = null,
+        string $to = null
+    ) {
+        $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $userId, $labelNames, $notLabelNames, $from, $to);
 
         $dql = 'SELECT message, labels FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
         $parameters = [];
         $nextParameterKey = 0;
 
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, null, $from, $to); // passing labelNames as null here ensures each message is hydrated with all its labels
+        // passing labelNames as null here ensures each message is hydrated with all its labels
+        // the label filtering was already done in partials
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, null, null, $from, $to);
 
         if (count($partials) > 0) {
             $dql .= ' AND ( ';
@@ -52,19 +64,7 @@ class  GmailMessageRepository extends EntityRepository
             }
             $dql = rtrim($dql, ' OR ');
             $dql .= ')';
-            switch ($dateSort) {
-                case 'ASC':
-                    $dql .= ' ORDER BY message.sentAt ASC';
-                    break;
-                case 'DESC':
-                    $dql .= ' ORDER BY message.sentAt DESC';
-                    break;
-                case null:
-                    // avoid the exception
-                    break;
-                default:
-                    throw new \InvalidArgumentException('Invalid dateSort, must be ASC or DESC');
-            }
+            $this->uniqueByThreadSortClause($dql, $dateSort);
             return $this->getEntityManager()->createQuery($dql)->setParameters($parameters)->getResult();
         }
         return [];
@@ -75,14 +75,21 @@ class  GmailMessageRepository extends EntityRepository
      *
      * @param string|null $userId
      * @param string[]|null $labelNames
+     * @param string[]|null $notLabelNames
      * @param string|null $from
      * @param string|null $to
      *
      * @return int
      */
-    public function countUniqueByThread(string $userId = null, array $labelNames = null, string $from = null, string $to = null)
+    public function countUniqueByThread(
+        string $userId = null,
+        array $labelNames = null,
+        array $notLabelNames = null,
+        string $from = null,
+        string $to = null
+    )
     {
-        return count($this->uniqueByThreadPartials(null, null, null, $userId, $labelNames, $from, $to));
+        return count($this->uniqueByThreadPartials(null, null, null, $userId, $labelNames, $notLabelNames, $from, $to));
     }
 
     /**
@@ -91,6 +98,7 @@ class  GmailMessageRepository extends EntityRepository
      * @param string|null $dateSort ('ASC', 'DESC', null)
      * @param string|null $userId (null = all results independent of userId)
      * @param string[]|null $labelNames (null = all results independent of labelName)
+     * @param string[]|null $notLabelNames (null = all results independent of labelName)
      * @param string|null $from (null = all results independent of from)
      * @param string|null $to (null = all results independent of to)
      *
@@ -112,29 +120,26 @@ class  GmailMessageRepository extends EntityRepository
      *
      * With indexes, the time complexity for partials is P(log[N]) = numberOfPartials(log[numberOfMessagesInTable])
      */
-    private function uniqueByThreadPartials(int $limit = null, int $offset = null, string $dateSort = null, string $userId = null, array $labelNames = null, string $from = null, string $to = null)
+    private function uniqueByThreadPartials(
+        int $limit = null,
+        int $offset = null,
+        string $dateSort = null,
+        string $userId = null,
+        array $labelNames = null,
+        array $notLabelNames = null,
+        string $from = null,
+        string $to = null
+    )
     {
         $dql ='SELECT message.threadId, message.userId, max(message.sentAt) AS latestSentAt FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
 
         $parameters = [];
         $nextParameterKey = 0;
 
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, $labelNames, $from, $to);
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, $labelNames, $notLabelNames, $from, $to);
         $dql .= ' GROUP BY message.threadId, message.userId ';
 
-        switch ($dateSort) {
-            case 'ASC':
-                $dql .= ' ORDER BY latestSentAt ASC';
-                break;
-            case 'DESC':
-                $dql .= ' ORDER BY latestSentAt DESC';
-                break;
-            case null:
-                // avoid the exception
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid dateSort, must be ASC or DESC');
-        }
+        $this->uniqueByThreadSortClause($dql, $dateSort);
 
         $queryThreadIds = $this->getEntityManager()->createQuery($dql)->setParameters($parameters);
 
@@ -158,10 +163,19 @@ class  GmailMessageRepository extends EntityRepository
      * @param int $nextParameterKey
      * @param string|null $userId
      * @param array|null $labelNames
+     * @param array|null $notLabelNames
      * @param string|null $from
      * @param string|null $to
      */
-    private function uniqueByThreadWhereClause(string &$dql, array &$parameters, int &$nextParameterKey, string $userId = null, array $labelNames = null, string $from = null, string $to = null)
+    private function uniqueByThreadWhereClause(
+        string &$dql,
+        array &$parameters,
+        int &$nextParameterKey,
+        string $userId = null,
+        array $labelNames = null,
+        array $notLabelNames = null,
+        string $from = null,
+        string $to = null)
     {
         /**
          * If no where statements are created, append 'WHERE true=true' to the $dql
@@ -171,6 +185,11 @@ class  GmailMessageRepository extends EntityRepository
         if (is_array($labelNames) && count($labelNames)  > 0) {
             $dql .= sprintf(' labels.name IN (?%d)  AND ', $nextParameterKey);
             $parameters[] = $labelNames;
+            $nextParameterKey++;
+        }
+        if (is_array($notLabelNames) && count($notLabelNames)  > 0) {
+            $dql .= sprintf(' labels.name NOT IN (?%d)  AND ', $nextParameterKey);
+            $parameters[] = $notLabelNames;
             $nextParameterKey++;
         }
         if (is_string($userId)) {
@@ -189,5 +208,29 @@ class  GmailMessageRepository extends EntityRepository
             $nextParameterKey++;
         }
         $dql = rtrim($dql, ' AND ');
+    }
+
+    /**
+     * @param string $dql
+     * @param string $dateSort
+     */
+    private function uniqueByThreadSortClause(
+        string &$dql,
+        string $dateSort = null
+    )
+    {
+        switch ($dateSort) {
+            case 'ASC':
+                $dql .= ' ORDER BY latestSentAt ASC';
+                break;
+            case 'DESC':
+                $dql .= ' ORDER BY latestSentAt DESC';
+                break;
+            case null:
+                // avoid the exception and don't sort
+                break;
+            default:
+                throw new \InvalidArgumentException('Invalid dateSort, must be ASC or DESC');
+        }
     }
 }
