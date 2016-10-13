@@ -9,7 +9,7 @@ use FL\GmailBundle\Model\GmailMessageInterface;
 * Class GmailMessageRepository
 * @package FL\GmailDoctrineBundle\Entity
 */
-class GmailMessageRepository extends EntityRepository
+class  GmailMessageRepository extends EntityRepository
 {
     const LABEL_SPAM = "SPAM";
     const LABEL_TRASH = "TRASH";
@@ -52,6 +52,19 @@ class GmailMessageRepository extends EntityRepository
             }
             $dql = rtrim($dql, ' OR ');
             $dql .= ')';
+            switch ($dateSort) {
+                case 'ASC':
+                    $dql .= ' ORDER BY message.sentAt ASC';
+                    break;
+                case 'DESC':
+                    $dql .= ' ORDER BY message.sentAt DESC';
+                    break;
+                case null:
+                    // avoid the exception
+                    break;
+                default:
+                    throw new \InvalidArgumentException('Invalid dateSort, must be ASC or DESC');
+            }
             return $this->getEntityManager()->createQuery($dql)->setParameters($parameters)->getResult();
         }
         return [];
