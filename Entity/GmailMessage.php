@@ -176,8 +176,8 @@ class GmailMessage extends BaseGmailMessage
     public function doesNotHaveLabel(string $name): bool
     {
         $criteria = Criteria::create();
-        $criteria->where(Criteria::expr()->neq('name', $name));
-        return ($this->labels->matching($criteria)->count() > 0);
+        $criteria->where(Criteria::expr()->eq('name', $name));
+        return ($this->labels->matching($criteria)->count() === 0);
     }
 
     /**
