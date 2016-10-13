@@ -149,6 +149,16 @@ class GmailMessage extends BaseGmailMessage
     }
 
     /**
+     * @return GmailMessageInterface
+     */
+    public function clearLabels(): GmailMessageInterface
+    {
+        $this->labels = new ArrayCollection();
+
+        return $this;
+    }
+
+    /**
      * @param string $name
      * @return bool
      */

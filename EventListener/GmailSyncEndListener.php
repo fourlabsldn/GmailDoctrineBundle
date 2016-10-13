@@ -62,13 +62,23 @@ class GmailSyncEndListener
 
             /** @var GmailLabel $label */
             foreach ($message->getLabels() as $label) {
+                // substitute labels already in the db
                 if ($persistedLabels->hasLabelOfNameAndUserId($label->getName(), $label->getUserId())) {
                     $message->removeLabel($label);
                     $message->addLabel($persistedLabels->getLabelOfName($label->getName()));
                 }
             }
 
-            if (! ($this->messageRepository->findOneByGmailId($message->getGmailId()))) { //message isn't persisted already
+            $persistedMessage = $this->messageRepository->findOneByGmailId($message->getGmailId());
+            // message is in the db, refresh labels
+            if ($persistedMessage instanceof GmailMessage) {
+                $persistedMessage->clearLabels();
+                foreach ($message->getLabels() as $label) {
+                    $persistedMessage->addLabel($label);
+                }
+            }
+            // message isn't in the db yet
+            else {
                 $this->entityManager->persist($message);
             }
         }
