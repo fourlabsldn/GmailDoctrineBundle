@@ -22,7 +22,6 @@ class  GmailMessageRepository extends EntityRepository
      * @param string|null $dateSort
      * @param string|null $userId
      * @param string[]|null $labelNames
-     * @param string[]|null $notLabelNames
      * @param string|null $from
      * @param string|null $to
      *
@@ -34,11 +33,10 @@ class  GmailMessageRepository extends EntityRepository
         string $dateSort = null,
         string $userId = null,
         array $labelNames = null,
-        array $notLabelNames = null,
         string $from = null,
         string $to = null
     ) {
-        $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $userId, $labelNames, $notLabelNames, $from, $to);
+        $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $userId, $labelNames, $from, $to);
 
         $dql = 'SELECT message, labels FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
         $parameters = [];
@@ -75,7 +73,6 @@ class  GmailMessageRepository extends EntityRepository
      *
      * @param string|null $userId
      * @param string[]|null $labelNames
-     * @param string[]|null $notLabelNames
      * @param string|null $from
      * @param string|null $to
      *
@@ -84,12 +81,11 @@ class  GmailMessageRepository extends EntityRepository
     public function countUniqueByThread(
         string $userId = null,
         array $labelNames = null,
-        array $notLabelNames = null,
         string $from = null,
         string $to = null
     )
     {
-        return count($this->uniqueByThreadPartials(null, null, null, $userId, $labelNames, $notLabelNames, $from, $to));
+        return count($this->uniqueByThreadPartials(null, null, null, $userId, $labelNames, $from, $to));
     }
 
     /**
@@ -98,7 +94,6 @@ class  GmailMessageRepository extends EntityRepository
      * @param string|null $dateSort ('ASC', 'DESC', null)
      * @param string|null $userId (null = all results independent of userId)
      * @param string[]|null $labelNames (null = all results independent of labelName)
-     * @param string[]|null $notLabelNames (null = all results independent of labelName)
      * @param string|null $from (null = all results independent of from)
      * @param string|null $to (null = all results independent of to)
      *
@@ -126,27 +121,26 @@ class  GmailMessageRepository extends EntityRepository
         string $dateSort = null,
         string $userId = null,
         array $labelNames = null,
-        array $notLabelNames = null,
         string $from = null,
         string $to = null
     )
     {
-        $dql ='SELECT message.threadId, message.userId, max(message.sentAt) AS latestSentAt FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
+        $dql ='SELECT labels.userId, message.threadId, message.userId, max(message.sentAt) AS latestSentAt FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
 
         $parameters = [];
         $nextParameterKey = 0;
 
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, $labelNames, $notLabelNames, $from, $to);
-        $dql .= ' GROUP BY message.threadId, message.userId ';
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, $labelNames, $from, $to);
+        $dql .= ' GROUP BY message.threadId, message.userId, labels.userId ';
 
         $this->uniqueByThreadSortClause($dql, 'latestSentAt', $dateSort);
 
         $queryThreadIds = $this->getEntityManager()->createQuery($dql)->setParameters($parameters);
 
-        if ( is_null($limit) && is_int($offset)) {
+        if (is_null($limit) && is_int($offset)) {
             $queryThreadIds->setFirstResult($offset);
         }
-        if ( is_int($limit) && is_null($offset)) {
+        if (is_int($limit) && is_null($offset)) {
             $queryThreadIds->setMaxResults($limit);
         }
         if (is_int($limit) && is_int($offset)) {
@@ -163,7 +157,6 @@ class  GmailMessageRepository extends EntityRepository
      * @param int $nextParameterKey
      * @param string|null $userId
      * @param array|null $labelNames
-     * @param array|null $notLabelNames
      * @param string|null $from
      * @param string|null $to
      */
@@ -173,7 +166,6 @@ class  GmailMessageRepository extends EntityRepository
         int &$nextParameterKey,
         string $userId = null,
         array $labelNames = null,
-        array $notLabelNames = null,
         string $from = null,
         string $to = null)
     {
@@ -185,11 +177,6 @@ class  GmailMessageRepository extends EntityRepository
         if (is_array($labelNames) && count($labelNames)  > 0) {
             $dql .= sprintf(' labels.name IN (?%d)  AND ', $nextParameterKey);
             $parameters[] = $labelNames;
-            $nextParameterKey++;
-        }
-        if (is_array($notLabelNames) && count($notLabelNames)  > 0) {
-            $dql .= sprintf(' labels.name NOT IN (?%d)  AND ', $nextParameterKey);
-            $parameters[] = $notLabelNames;
             $nextParameterKey++;
         }
         if (is_string($userId)) {
