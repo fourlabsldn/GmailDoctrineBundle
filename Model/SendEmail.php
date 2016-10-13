@@ -21,7 +21,6 @@ class SendEmail
     /**
      * @var string
      * @Assert\NotBlank()
-     * @Assert\Email()
      */
     private $to;
 
@@ -172,8 +171,17 @@ class SendEmail
         $swiftMessage->setBody($sendEmail->getBodyHtml(), 'text/html');
         $swiftMessage->addPart($sendEmail->getBodyPlainText(), 'text/plain');
         $swiftMessage->setFrom($sendEmail->getFrom());
-        $swiftMessage->setTo($sendEmail->getTo());
         $swiftMessage->setThreadId($sendEmail->getThreadId());
+
+        $possibleEmails = preg_split("/(,|<|>|,\\s)/", $sendEmail->to );
+        $emails = [];
+        foreach($possibleEmails as $possibleEmail){
+            if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
+                $emails[$possibleEmail] = $possibleEmail;
+            }
+        }
+        $swiftMessage->setTo($emails);
+
 
         return $swiftMessage;
     }
