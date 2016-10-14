@@ -94,7 +94,7 @@ class SyncWrapper
     /**
      * @param string $userId
      */
-    private function syncByUserId(string $userId)
+    public function syncByUserId(string $userId)
     {
         $previousHistory = $this->historyRepository->findOneByUserId($userId);
         /** @var GmailHistory|null $previousHistory */
