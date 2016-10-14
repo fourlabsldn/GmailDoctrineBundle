@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class Email
- * @package FL\GmailDoctrineBundle\Model\Email
+ * @package FL\GmailDoctrineBundle\Model
  */
 class SendEmail
 {

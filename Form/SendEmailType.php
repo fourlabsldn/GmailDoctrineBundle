@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class SendEmailType
- * @package FL\GmailDoctrineBundle\Form\Type
+ * @package FL\GmailDoctrineBundle\Form
  */
 class SendEmailType extends AbstractType
 {
