@@ -221,4 +221,17 @@ class  GmailMessageRepository extends EntityRepository
                 throw new \InvalidArgumentException('Invalid dateSort, must be ASC or DESC');
         }
     }
+
+    /**
+     * @param array $userIds
+     * @return array
+     */
+    public function getAllFromUserIds(array $userIds)
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.userId IN (:ids)')
+            ->setParameter('ids', $userIds)
+            ->getQuery()
+            ->getResult();
+    }
 }
