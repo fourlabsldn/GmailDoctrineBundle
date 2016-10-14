@@ -57,8 +57,10 @@ class SyncSettingListener
             $oldUserIds = $args->getOldValue('userIds');
             $newUserIds = $args->getNewValue('userIds');
 
-            $userIdsRemoved = array_diff($newUserIds, $oldUserIds);
+            // be careful with the ordering in array_diff
+            $userIdsRemoved = array_diff($oldUserIds, $newUserIds);
             $objectManager = $args->getObjectManager();
+
             $this->removeMessages($userIdsRemoved, $objectManager);
             $this->removeLabels($userIdsRemoved, $objectManager);
             $this->removeHistories($userIdsRemoved, $objectManager);
