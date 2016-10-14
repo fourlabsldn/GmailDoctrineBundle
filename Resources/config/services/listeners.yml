@@ -23,6 +23,7 @@ services:
         tags:
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
     fl_gmail_doctrine.listener.gmail_api_message:
         class: FL\GmailDoctrineBundle\EventListener\GmailMessageSentListener
         arguments:
