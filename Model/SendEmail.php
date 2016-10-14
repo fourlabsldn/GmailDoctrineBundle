@@ -4,6 +4,7 @@ namespace FL\GmailDoctrineBundle\Model;
 
 use FL\GmailBundle\Swift\SwiftGmailMessage;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class Email
@@ -162,6 +163,21 @@ class SendEmail
     }
 
     /**
+     * @Assert\Callback
+     * @param ExecutionContextInterface $context
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if (count(self::getMultipleEmailsFromString($this->to)) === 0) {
+            $context
+                ->buildViolation('This field requires at least one valid email.')
+                ->atPath('to')
+                ->addViolation()
+            ;
+        }
+    }
+
+    /**
      * @param SendEmail $sendEmail
      * @return SwiftGmailMessage
      */
@@ -171,18 +187,30 @@ class SendEmail
         $swiftMessage->setBody($sendEmail->getBodyHtml(), 'text/html');
         $swiftMessage->addPart($sendEmail->getBodyPlainText(), 'text/plain');
         $swiftMessage->setFrom($sendEmail->getFrom());
+        $swiftMessage->setTo(static::getMultipleEmailsFromString($sendEmail->getTo()));
         $swiftMessage->setThreadId($sendEmail->getThreadId());
 
-        $possibleEmails = preg_split("/(,|<|>|,\\s)/", $sendEmail->to );
+        return $swiftMessage;
+    }
+
+    /**
+     * Will convert even somewhat broken strings to an array of emails. E.g.:
+     * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com
+     *
+     * @param string $string
+     * @return array
+     */
+    final protected static function getMultipleEmailsFromString(string $string = null)
+    {
         $emails = [];
-        foreach($possibleEmails as $possibleEmail){
-            if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
-                $emails[$possibleEmail] = $possibleEmail;
+        if (is_string($string) && !empty($string)) {
+            $possibleEmails = preg_split("/(,|<|>|,|\\s)/", $string);
+            foreach($possibleEmails as $possibleEmail){
+                if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
+                    $emails[$possibleEmail] = $possibleEmail;
+                }
             }
         }
-        $swiftMessage->setTo($emails);
-
-
-        return $swiftMessage;
+        return $emails;
     }
 }
