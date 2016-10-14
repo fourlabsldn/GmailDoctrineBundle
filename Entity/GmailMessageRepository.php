@@ -234,4 +234,17 @@ class  GmailMessageRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    public function getAllFromIds(array $ids)
+    {
+        return $this->createQueryBuilder('m')
+            ->where('m.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
 }
