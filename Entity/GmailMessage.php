@@ -67,7 +67,7 @@ class GmailMessage extends BaseGmailMessage
     protected $from;
 
     /**
-     * @ORM\Column(type="datetime", nullable=false)
+     * @ORM\Column(type="datetimetz", nullable=false)
      * @Assert\NotNull
      * @var \DateTimeInterface
      */
