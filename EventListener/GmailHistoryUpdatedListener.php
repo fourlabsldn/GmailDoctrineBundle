@@ -47,8 +47,10 @@ class GmailHistoryUpdatedListener
         if ($newHistory->getHistoryId() && $newHistory->getUserId()) {
             $oldHistory = $this->historyRepository->findOneBy(['userId'=> $newHistory->getUserId()]);
 
-            if ($oldHistory instanceof GmailHistory) { // already have a history in the db for this user, replace it
-                $oldHistory->setHistoryId($newHistory->getHistoryId());
+            if ($oldHistory instanceof GmailHistory) { // already have a history in the db for this user
+                if ($newHistory->getHistoryId() > $oldHistory->getHistoryId()) {
+                    $oldHistory->setHistoryId($newHistory->getHistoryId());
+                }
                 $entityManager->persist($oldHistory);
             } else { //no history in the db for this user, create a new one
                 $entityManager->persist($newHistory);
