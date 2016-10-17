@@ -3,6 +3,7 @@
 namespace FL\GmailDoctrineBundle\Model;
 
 use FL\GmailBundle\Swift\SwiftGmailMessage;
+use FL\GmailBundle\Util\EmailTransformations;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -187,30 +188,9 @@ class SendEmail
         $swiftMessage->setBody($sendEmail->getBodyHtml(), 'text/html');
         $swiftMessage->addPart($sendEmail->getBodyPlainText(), 'text/plain');
         $swiftMessage->setFrom($sendEmail->getFrom());
-        $swiftMessage->setTo(static::getMultipleEmailsFromString($sendEmail->getTo()));
+        $swiftMessage->setTo(EmailTransformations::getMultipleEmailsFromString($sendEmail->getTo()));
         $swiftMessage->setThreadId($sendEmail->getThreadId());
 
         return $swiftMessage;
-    }
-
-    /**
-     * Will convert even somewhat broken strings to an array of emails. E.g.:
-     * email@example.com Miles <miles@example.com>, Mila <mila@example.com, Charles charles@example.com,,,,, <Mick> mick@example.com
-     *
-     * @param string $string
-     * @return array
-     */
-    final protected static function getMultipleEmailsFromString(string $string = null)
-    {
-        $emails = [];
-        if (is_string($string) && !empty($string)) {
-            $possibleEmails = preg_split("/(,|<|>|,|\\s)/", $string);
-            foreach($possibleEmails as $possibleEmail){
-                if (filter_var($possibleEmail, FILTER_VALIDATE_EMAIL)) {
-                    $emails[$possibleEmail] = $possibleEmail;
-                }
-            }
-        }
-        return $emails;
     }
 }
