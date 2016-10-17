@@ -11,9 +11,6 @@ use FL\GmailBundle\Model\GmailMessageInterface;
 */
 class  GmailMessageRepository extends EntityRepository
 {
-    const LABEL_SPAM = "SPAM";
-    const LABEL_TRASH = "TRASH";
-
     /**
      * @see GmailMessageRepository::uniqueByThreadPartials()
      *
