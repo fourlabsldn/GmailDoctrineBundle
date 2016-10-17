@@ -188,7 +188,7 @@ class SendEmail
         $swiftMessage->setBody($sendEmail->getBodyHtml(), 'text/html');
         $swiftMessage->addPart($sendEmail->getBodyPlainText(), 'text/plain');
         $swiftMessage->setFrom($sendEmail->getFrom());
-        $swiftMessage->setTo(EmailTransformations::getMultipleEmailsFromString($sendEmail->getTo()));
+        $swiftMessage->setTo(EmailTransformations::getMultipleEmailsFromString($sendEmail->getTo(), true));
         $swiftMessage->setThreadId($sendEmail->getThreadId());
 
         return $swiftMessage;
