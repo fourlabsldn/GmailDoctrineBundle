@@ -153,7 +153,7 @@ class SyncWrapper
         if ($persistedGmailIds instanceof  GmailIdsInterface) {
             $allIdsToSync = $persistedGmailIds->getGmailIds();
             // note, we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
-            $idsToSyncRightNow = array_slice($allIdsToSync, 0, 30);
+            $idsToSyncRightNow = array_slice($allIdsToSync, 0, $messagesToSync);
 
             $persistedGmailIds->setGmailIds($idsToSyncRightNow);
             $this->syncMessages->syncFromGmailIds($persistedGmailIds);
@@ -165,6 +165,4 @@ class SyncWrapper
 
         $this->entityManager->flush();
     }
-
-
 }

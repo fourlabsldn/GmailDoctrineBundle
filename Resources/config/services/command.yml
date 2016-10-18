@@ -1,5 +1,5 @@
 services:
-    fl_gmail_doctrine.command.sync-emails:
+    fl_gmail_doctrine.command.sync_emails:
         class: FL\GmailDoctrineBundle\Command\SyncCommand
         arguments:
             - "@fl_gmail_doctrine.sync_wrapper"

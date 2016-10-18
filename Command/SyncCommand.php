@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SyncCommand extends Command
 {
-    const COMMAND_NAME = 'fl:gmail_doctrine:sync-emails';
+    const COMMAND_NAME = 'fl:gmail_doctrine:sync_emails';
 
     /**
      * @var SyncWrapper
