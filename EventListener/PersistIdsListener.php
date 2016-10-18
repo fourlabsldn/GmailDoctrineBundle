@@ -41,7 +41,7 @@ class PersistIdsListener
      */
     public function onGmailSyncIds(GmailSyncIdsEvent $event)
     {
-        $persistedGmailIds = $this->gmailIdsRepository->findBy($event->getGmailIdsObject()->getUserId());
+        $persistedGmailIds = $this->gmailIdsRepository->findOneByUserId($event->getGmailIdsObject()->getUserId());
 
         if ($persistedGmailIds instanceof GmailIdsInterface) {
             $persistedGmailIds->setGmailIds(

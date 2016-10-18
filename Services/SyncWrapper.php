@@ -2,17 +2,15 @@
 
 namespace FL\GmailDoctrineBundle\Services;
 
-use Doctrine\ORM\EntityManagerInterface;
 use FL\GmailBundle\Model\GmailIdsInterface;
 use FL\GmailBundle\Services\SyncGmailIds;
-use FL\GmailBundle\Services\SyncHelper;
 use FL\GmailBundle\Services\SyncMessages;
-use FL\GmailDoctrineBundle\Entity\GmailHistory;
-use FL\GmailDoctrineBundle\Entity\SyncSetting;
-use Doctrine\ORM\EntityRepository;
 use FL\GmailBundle\Services\Directory;
 use FL\GmailBundle\Services\OAuth;
-use FL\GmailBundle\Services\SyncManager;
+use FL\GmailDoctrineBundle\Entity\GmailHistory;
+use FL\GmailDoctrineBundle\Entity\SyncSetting;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Class SyncWrapper
@@ -155,8 +153,10 @@ class SyncWrapper
         if ($persistedGmailIds instanceof  GmailIdsInterface) {
             $allIdsToSync = $persistedGmailIds->getGmailIds();
             // note, we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
-            $idsToSyncRightNow = array_slice($allIdsToSync, 0, $messagesToSync);
-            $this->syncMessages->syncFromGmailIds($idsToSyncRightNow);
+            $idsToSyncRightNow = array_slice($allIdsToSync, 0, 30);
+
+            $persistedGmailIds->setGmailIds($idsToSyncRightNow);
+            $this->syncMessages->syncFromGmailIds($persistedGmailIds);
 
             // be careful with the ordering in array_diff
             $persistedGmailIds->setGmailIds(array_diff($allIdsToSync, $idsToSyncRightNow));
