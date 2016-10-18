@@ -45,7 +45,7 @@ class PersistIdsListener
 
         if ($persistedGmailIds instanceof GmailIdsInterface) {
             $persistedGmailIds->setGmailIds(
-                array_merge($persistedGmailIds->getGmailIds(), $event->getGmailIdsObject()->getGmailIds())
+                array_merge($event->getGmailIdsObject()->getGmailIds(), $persistedGmailIds->getGmailIds())
             );
             $this->entityManager->persist($persistedGmailIds);
 

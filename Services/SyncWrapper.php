@@ -45,6 +45,11 @@ class SyncWrapper
     private $directory;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @var EntityRepository
      */
     private $historyRepository;
@@ -84,43 +89,46 @@ class SyncWrapper
         $this->syncMessages = $syncMessages;
         $this->oAuth = $oAuth;
         $this->directory = $directory;
+        $this->entityManager = $entityManager;
         $this->historyRepository = $entityManager->getRepository($historyClass);
         $this->syncSettingRepository = $entityManager->getRepository($syncSettingClass);
         $this->gmailIdsRepository = $entityManager->getRepository($gmailIdsClass);
     }
 
     /**
-     * @return void
+     * @param int $messagesToSync
      */
-    public function sync()
+    public function sync(int $messagesToSync)
     {
         $domain = $this->oAuth->resolveDomain();
         $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
 
         if ($syncSetting instanceof SyncSetting) {
             foreach ($syncSetting->getUserIds() as $userId) {
-                $this->syncByUserId($userId);
+                $this->syncByUserId($userId, $messagesToSync);
             }
         }
     }
 
     /**
      * @param string $email
+     * @param $messagesToSync
      */
-    public function syncEmail(string $email)
+    public function syncEmail(string $email, int $messagesToSync)
     {
         $domain = $this->oAuth->resolveDomain();
         $userId = $this->directory->resolveUserIdFromEmail($email, $domain, Directory::MODE_RESOLVE_PRIMARY_PLUS_ALIASES);
-        $this->syncByUserId($userId);
+        $this->syncByUserId($userId, $messagesToSync);
     }
 
     /**
      * @param string $userId
+     * @param int $messagesToSync
      */
-    public function syncByUserId(string $userId)
+    public function syncByUserId(string $userId, int $messagesToSync)
     {
         $this->syncGmailIdsByUserId($userId);
-        $this->syncMessagesByUserId($userId);
+        $this->syncMessagesByUserId($userId, $messagesToSync);
     }
 
     /**
@@ -138,15 +146,24 @@ class SyncWrapper
 
     /**
      * @param string $userId
+     * @param int $messagesToSync
      */
-    private function syncMessagesByUserId(string $userId)
+    private function syncMessagesByUserId(string $userId, int $messagesToSync)
     {
         $this->syncGmailIdsByUserId($userId);
-        $previousGmailIds = $this->gmailIdsRepository->findOneByUserId($userId);
-        if ($previousGmailIds instanceof  GmailIdsInterface) {
-            // @todo only sync some, and leave the rest for later
-            $this->syncMessages->syncFromGmailIds($previousGmailIds->getGmailIds());
+        $persistedGmailIds = $this->gmailIdsRepository->findOneByUserId($userId);
+        if ($persistedGmailIds instanceof  GmailIdsInterface) {
+            $allIdsToSync = $persistedGmailIds->getGmailIds();
+            // note, we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
+            $idsToSyncRightNow = array_slice($allIdsToSync, 0, $messagesToSync);
+            $this->syncMessages->syncFromGmailIds($idsToSyncRightNow);
+
+            // be careful with the ordering in array_diff
+            $persistedGmailIds->setGmailIds(array_diff($allIdsToSync, $idsToSyncRightNow));
+            $this->entityManager->persist($persistedGmailIds);
         }
+
+        $this->entityManager->flush();
     }
 
 
