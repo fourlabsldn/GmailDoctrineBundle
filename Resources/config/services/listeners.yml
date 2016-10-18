@@ -30,6 +30,7 @@ services:
             - "%fl_gmail.gmail_message_class%"
             - "%fl_gmail.gmail_label_class%"
             - "%fl_gmail.gmail_history_class%"
+            - "%fl_gmail.gmail_ids_class%"
         tags:
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: preRemove }

@@ -12,7 +12,8 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Class CleanUpMessagesListener
  * @package FL\GmailDoctrineBundle\EventListener
  *
- * Clean up messages, when there's changes in GmailSyncSetting entities
+ * Clean up messages, labels, histories, and gmailIds,
+ * when there's changes in SyncSetting entities
  */
 class CleanUpMessagesListener
 {
@@ -30,6 +31,11 @@ class CleanUpMessagesListener
      * @var string
      */
     private $historyClass;
+
+    /**
+     * @var string
+     */
+    private $gmailIdsClass;
 
     /**
      * @var array
@@ -52,12 +58,14 @@ class CleanUpMessagesListener
      * @param string $messageClass
      * @param string $labelClass
      * @param string $historyClass
+     * @param string $gmailIdsClass
      */
-    public function __construct(string $messageClass, string $labelClass, string $historyClass)
+    public function __construct(string $messageClass, string $labelClass, string $historyClass, string $gmailIdsClass)
     {
         $this->messageClass = $messageClass;
         $this->labelClass = $labelClass;
         $this->historyClass = $historyClass;
+        $this->gmailIdsClass = $gmailIdsClass;
         $this->removeTheseEntities = [];
     }
 
@@ -83,6 +91,7 @@ class CleanUpMessagesListener
             $this->removeMessages($userIdsRemoved, $objectManager);
             $this->removeLabels($userIdsRemoved, $objectManager);
             $this->removeHistories($userIdsRemoved, $objectManager);
+            $this->removeGmailIds($userIdsRemoved, $objectManager);
         }
     }
 
@@ -101,8 +110,8 @@ class CleanUpMessagesListener
         $this->removeMessages($userIdsRemoved, $objectManager);
         $this->removeLabels($userIdsRemoved, $objectManager);
         $this->removeHistories($userIdsRemoved, $objectManager);
+        $this->removeGmailIds($userIdsRemoved, $objectManager);
     }
-
 
     /**
      * @param string[] $userIdsRemoved
@@ -134,6 +143,17 @@ class CleanUpMessagesListener
     {
         foreach ($objectManager->getRepository($this->historyClass)->getAllFromUserIds($userIdsRemoved) as $history) {
             $this->removeTheseEntities[] = $history;
+        }
+    }
+
+    /**
+     * @param string[] $userIdsRemoved
+     * @param ObjectManager $objectManager
+     */
+    private function removeGmailIds(array $userIdsRemoved, ObjectManager $objectManager)
+    {
+        foreach ($objectManager->getRepository($this->gmailIdsClass)->getAllFromUserIds($userIdsRemoved) as $gmailIdsForUser) {
+            $this->removeTheseEntities[] = $gmailIdsForUser;
         }
     }
 
