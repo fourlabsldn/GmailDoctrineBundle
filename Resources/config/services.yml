@@ -14,3 +14,4 @@ services:
             - "@doctrine.orm.entity_manager"
             - "%fl_gmail.gmail_history_class%"
             - "%fl_gmail_doctrine.sync_setting_class%"
+            - "%fl_gmail.gmail_ids_class%"
