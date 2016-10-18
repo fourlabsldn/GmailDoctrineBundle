@@ -5,11 +5,11 @@ namespace FL\GmailDoctrineBundle\EventListener;
 use FL\GmailDoctrineBundle\Services\SyncWrapper;
 
 /**
- * Class GmailMessageSent
+ * Class SyncMessagesSentListener
  * @package FL\GmailDoctrineBundle\EventListener
  * @link http://stackoverflow.com/questions/18033210/logging-swiftmailer-send-activity-in-symfony2
  */
-class GmailMessageSentListener implements \Swift_Events_SendListener
+class SyncMessagesSentListener implements \Swift_Events_SendListener
 {
 
     /**

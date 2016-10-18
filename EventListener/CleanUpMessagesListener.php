@@ -9,10 +9,12 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Class SyncSettingListener
+ * Class CleanUpMessagesListener
  * @package FL\GmailDoctrineBundle\EventListener
+ *
+ * Clean up messages, when there's changes in GmailSyncSetting entities
  */
-class SyncSettingListener
+class CleanUpMessagesListener
 {
     /**
      * @var string

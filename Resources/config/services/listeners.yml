@@ -1,21 +1,31 @@
 services:
-    fl_gmail_doctrine.listener.gmail_history_updated:
-        class: FL\GmailDoctrineBundle\EventListener\GmailHistoryUpdatedListener
+    fl_gmail_doctrine.listener.persist_ids:
+        class: FL\GmailDoctrineBundle\EventListener\PersistIdsListener
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "%fl_gmail.gmail_ids_class%"
+        tags:
+            - { name: kernel.event_listener, event: fl_gmail.sync.ids, method: onGmailSyncIds }
+
+    fl_gmail_doctrine.listener.persist_history:
+        class: FL\GmailDoctrineBundle\EventListener\PersistHistoryListener
         arguments:
             - "@doctrine.orm.entity_manager"
             - "%fl_gmail.gmail_history_class%"
         tags:
-            - { name: kernel.event_listener, event: fl_gmail.gmail_history.updated, method: onGmailHistoryUpdated }
-    fl_gmail_doctrine.listener.gmail_sync_end:
-        class: FL\GmailDoctrineBundle\EventListener\GmailSyncEndListener
+            - { name: kernel.event_listener, event: fl_gmail.sync.history, method: onGmailSyncHistory }
+
+    fl_gmail_doctrine.listener.persist_messages:
+        class: FL\GmailDoctrineBundle\EventListener\PersistMessagesListener
         arguments:
             - "@doctrine.orm.entity_manager"
             - "%fl_gmail.gmail_message_class%"
             - "%fl_gmail.gmail_label_class%"
         tags:
-            - { name: kernel.event_listener, event: fl_gmail.sync.end, method: onSyncEnd }
-    fl_gmail_doctrine.listener.sync_setting:
-        class: FL\GmailDoctrineBundle\EventListener\SyncSettingListener
+            - { name: kernel.event_listener, event: fl_gmail.sync.messages, method: onGmailSyncMessages }
+
+    fl_gmail_doctrine.listener.clean_up_messages:
+        class: FL\GmailDoctrineBundle\EventListener\CleanUpMessagesListener
         arguments:
             - "%fl_gmail.gmail_message_class%"
             - "%fl_gmail.gmail_label_class%"
@@ -24,8 +34,9 @@ services:
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: preRemove }
             - { name: doctrine.event_listener, event: postFlush }
-    fl_gmail_doctrine.listener.gmail_api_message:
-        class: FL\GmailDoctrineBundle\EventListener\GmailMessageSentListener
+
+    fl_gmail_doctrine.listener.sync_message_sent:
+        class: FL\GmailDoctrineBundle\EventListener\SyncMessagesSentListener
         arguments:
             - "@fl_gmail_doctrine.sync_wrapper"
         tags:

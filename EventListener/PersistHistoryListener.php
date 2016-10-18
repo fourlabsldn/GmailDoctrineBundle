@@ -2,16 +2,16 @@
 
 namespace FL\GmailDoctrineBundle\EventListener;
 
-use FL\GmailDoctrineBundle\Entity\GmailHistory;
+use FL\GmailBundle\Event\GmailSyncHistoryEvent;
+use FL\GmailBundle\Model\GmailHistoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use FL\GmailBundle\Event\GmailHistoryUpdatedEvent;
 
 /**
- * Class GmailHistoryUpdatedListener
+ * Class PersistHistoryListener
  * @package FL\GmailDoctrineBundle\EventListener
  */
-class GmailHistoryUpdatedListener
+class PersistHistoryListener
 {
     /**
      * @var EntityManagerInterface
@@ -37,9 +37,9 @@ class GmailHistoryUpdatedListener
     /**
      * Persist the history ID for the user anytime it's updated.
      * Updates the row if it exists, creates it otherwise.
-     * @param GmailHistoryUpdatedEvent $event
+     * @param GmailSyncHistoryEvent $event
      */
-    public function onGmailHistoryUpdated(GmailHistoryUpdatedEvent $event)
+    public function onGmailSyncHistory(GmailSyncHistoryEvent $event)
     {
         $newHistory = $event->getHistory();
         $entityManager = $this->entityManager;
@@ -47,7 +47,7 @@ class GmailHistoryUpdatedListener
         if ($newHistory->getHistoryId() && $newHistory->getUserId()) {
             $oldHistory = $this->historyRepository->findOneBy(['userId'=> $newHistory->getUserId()]);
 
-            if ($oldHistory instanceof GmailHistory) { // already have a history in the db for this user
+            if ($oldHistory instanceof GmailHistoryInterface) { // already have a history in the db for this user
                 if ($newHistory->getHistoryId() > $oldHistory->getHistoryId()) {
                     $oldHistory->setHistoryId($newHistory->getHistoryId());
                 }

@@ -2,18 +2,18 @@
 
 namespace FL\GmailDoctrineBundle\EventListener;
 
-use FL\GmailDoctrineBundle\Entity\GmailMessage;
-use FL\GmailDoctrineBundle\Entity\GmailLabel;
+use FL\GmailBundle\Model\GmailLabelInterface;
+use FL\GmailBundle\Model\GmailMessageInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use FL\GmailBundle\Event\GmailSyncEndEvent;
+use FL\GmailBundle\Event\GmailSyncMessagesEvent;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
 
 /**
- * Class GmailHistoryUpdatedListener
+ * Class PersistMessagesListener
  * @package FL\GmailDoctrineBundle\EventListener
  */
-class GmailSyncEndListener
+class PersistMessagesListener
 {
     /**
      * @var EntityManagerInterface
@@ -44,23 +44,23 @@ class GmailSyncEndListener
 
     /**
      * @todo - Use less db queries, to check previous persistence
-     * @param GmailSyncEndEvent $event
+     * @param GmailSyncMessagesEvent $event
      */
-    public function onSyncEnd(GmailSyncEndEvent $event)
+    public function onGmailSyncMessages(GmailSyncMessagesEvent $event)
     {
         $persistedLabels = new GmailLabelCollection();
         foreach ($event->getLabelCollection()->getLabels() as $label) {
-            /** @var GmailLabel $label */
+            /** @var GmailLabelInterface $label */
             $existingLabel = $this->labelRepository->findOneBy(['name'=>$label->getName(), 'userId' => $label->getUserId()]);
-            if ($existingLabel instanceof GmailLabel) {
+            if ($existingLabel instanceof GmailLabelInterface) {
                 $persistedLabels->addLabel($existingLabel);
             }
         }
 
-        /** @var GmailMessage $message */
+        /** @var GmailMessageInterface $message */
         foreach ($event->getMessageCollection()->getMessages() as $message) {
 
-            /** @var GmailLabel $label */
+            /** @var GmailLabelInterface $label */
             foreach ($message->getLabels() as $label) {
                 // substitute labels already in the db
                 if ($persistedLabels->hasLabelOfNameAndUserId($label->getName(), $label->getUserId())) {
@@ -71,7 +71,7 @@ class GmailSyncEndListener
 
             $persistedMessage = $this->messageRepository->findOneByGmailId($message->getGmailId());
             // message is in the db, refresh labels
-            if ($persistedMessage instanceof GmailMessage) {
+            if ($persistedMessage instanceof GmailMessageInterface) {
                 $persistedMessage->clearLabels();
                 foreach ($message->getLabels() as $label) {
                     $persistedMessage->addLabel($label);
