@@ -3,6 +3,10 @@
 namespace FL\GmailDoctrineBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
+use FL\GmailBundle\Model\GmailIdsInterface;
+use FL\GmailBundle\Services\SyncGmailIds;
+use FL\GmailBundle\Services\SyncHelper;
+use FL\GmailBundle\Services\SyncMessages;
 use FL\GmailDoctrineBundle\Entity\GmailHistory;
 use FL\GmailDoctrineBundle\Entity\SyncSetting;
 use Doctrine\ORM\EntityRepository;
@@ -12,15 +16,23 @@ use FL\GmailBundle\Services\SyncManager;
 
 /**
  * Class SyncWrapper
- * This class provides a wrapper to interact with @see \FL\GmailBundle\Services\SyncManager
  * @package FL\GmailDoctrineBundle\Services
+ *
+ * This class provides a wrapper to interact with
+ * @see \FL\GmailBundle\Services\SyncGmailIds
+ * @see \FL\GmailBundle\Services\SyncMessages
  */
 class SyncWrapper
 {
     /**
-     * @var SyncManager
+     * @var SyncGmailIds
      */
-    private $syncManager;
+    private $syncGmailIds;
+
+    /**
+     * @var SyncMessages
+     */
+    private $syncMessages;
 
     /**
      * @var OAuth
@@ -43,27 +55,38 @@ class SyncWrapper
     private $syncSettingRepository;
 
     /**
+     * @var EntityRepository
+     */
+    private $gmailIdsRepository;
+
+    /**
      * Oauth constructor.
-     * @param SyncManager $syncManager
+     * @param SyncGmailIds $syncGmailIds
+     * @param SyncMessages $syncMessages
      * @param OAuth $oAuth
      * @param Directory $directory
      * @param EntityManagerInterface $entityManager
      * @param string $historyClass
      * @param string $syncSettingClass
+     * @param string $gmailIdsClass
      */
     public function __construct(
-        SyncManager $syncManager,
+        SyncGmailIds $syncGmailIds,
+        SyncMessages $syncMessages,
         OAuth $oAuth,
         Directory $directory,
         EntityManagerInterface $entityManager,
         string $historyClass,
-        string $syncSettingClass
+        string $syncSettingClass,
+        string $gmailIdsClass
     ) {
-        $this->syncManager = $syncManager;
+        $this->syncGmailIds = $syncGmailIds;
+        $this->syncMessages = $syncMessages;
         $this->oAuth = $oAuth;
         $this->directory = $directory;
         $this->historyRepository = $entityManager->getRepository($historyClass);
         $this->syncSettingRepository = $entityManager->getRepository($syncSettingClass);
+        $this->gmailIdsRepository = $entityManager->getRepository($gmailIdsClass);
     }
 
     /**
@@ -96,8 +119,35 @@ class SyncWrapper
      */
     public function syncByUserId(string $userId)
     {
-        $previousHistory = $this->historyRepository->findOneByUserId($userId);
-        /** @var GmailHistory|null $previousHistory */
-        $this->syncManager->sync($userId, $previousHistory ? $previousHistory->getHistoryId() : null);
+        $this->syncGmailIdsByUserId($userId);
+        $this->syncMessagesByUserId($userId);
     }
+
+    /**
+     * @param string $userId
+     */
+    private function syncGmailIdsByUserId(string $userId)
+    {
+        $previousHistory = $this->historyRepository->findOneByUserId($userId);
+        if ($previousHistory instanceof  GmailHistory) {
+            $this->syncGmailIds->syncFromHistoryId($userId, $previousHistory->getHistoryId());
+        } else {
+            $this->syncGmailIds->syncAll($userId);
+        }
+    }
+
+    /**
+     * @param string $userId
+     */
+    private function syncMessagesByUserId(string $userId)
+    {
+        $this->syncGmailIdsByUserId($userId);
+        $previousGmailIds = $this->gmailIdsRepository->findOneByUserId($userId);
+        if ($previousGmailIds instanceof  GmailIdsInterface) {
+            // @todo only sync some, and leave the rest for later
+            $this->syncMessages->syncFromGmailIds($previousGmailIds->getGmailIds());
+        }
+    }
+
+
 }
