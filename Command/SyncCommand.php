@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SyncCommand extends Command
 {
-    const COMMAND_NAME = 'fl:gmail_doctrine:sync_emails';
+    const COMMAND_NAME = 'fl:gmail_doctrine:sync';
 
     /**
      * @var SyncWrapper
@@ -50,13 +50,13 @@ class SyncCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Starting...\n');
+        $output->writeln('Starting...');
         try {
             $this->syncWrapper->sync(35); // remember, this is per user!
         } catch (\Exception $e) {
             $output->writeln('Exception! Did you make sure there\'s an authenticated Google Apps account for this application? ');
             throw $e;
         }
-        $output->writeln('Finished...\n');
+        $output->writeln('Finished...');
     }
 }
