@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Stores the relevant fields of Gmail Message, including its labels.
  * @ORM\MappedSuperclass
  */
-class GmailMessage extends BaseGmailMessage
+class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 {
     /**
      * @ORM\Id
@@ -239,4 +239,13 @@ class GmailMessage extends BaseGmailMessage
     {
         return $this->doesNotHaveLabel('TRASH');
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface
+    {
+        return parent::createFromGmailApiMessage($gmailApiMessage, $labels, $userId);
+    }
+
 }
