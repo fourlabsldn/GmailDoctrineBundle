@@ -3,17 +3,20 @@
 namespace FL\GmailDoctrineBundle\EventListener;
 
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use FL\GmailDoctrineBundle\Entity\GmailHistoryRepository;
+use FL\GmailDoctrineBundle\Entity\GmailIdsRepository;
+use FL\GmailDoctrineBundle\Entity\GmailLabelRepository;
+use FL\GmailDoctrineBundle\Entity\GmailMessageRepository;
 use FL\GmailDoctrineBundle\Entity\SyncSetting;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Class CleanUpMessagesListener
  * @package FL\GmailDoctrineBundle\EventListener
  *
- * Clean up messages, labels, histories, and gmailIds,
- * when there's changes in SyncSetting entities
+ * When email accounts are removed from the list of emails to be synced in SyncSettings,
+ * remove all associated messages, labels, histories and gmailIds
  */
 class CleanUpMessagesListener
 {
@@ -51,7 +54,7 @@ class CleanUpMessagesListener
      * I.e. if there is a power cut between the two flushes... the second flush won't execute.
      * @link http://stackoverflow.com/questions/16904462/adding-additional-persist-calls-to-preupdate-call-in-symfony-2-1#answer-16906067
      */
-    private $removeTheseEntities;
+    private $removeTheseUserIds = [];
 
     /**
      * SyncSettingListener constructor.
@@ -66,7 +69,6 @@ class CleanUpMessagesListener
         $this->labelClass = $labelClass;
         $this->historyClass = $historyClass;
         $this->gmailIdsClass = $gmailIdsClass;
-        $this->removeTheseEntities = [];
     }
 
 
@@ -75,23 +77,22 @@ class CleanUpMessagesListener
      */
     public function preUpdate(PreUpdateEventArgs $args)
     {
-        $entity = $args->getObject();
-        if (! ($entity instanceof SyncSetting)) {
+        if (
+            !($args->getObject() instanceof SyncSetting)
+            || !$args->hasChangedField('userIds')
+        ) {
             return;
         }
 
-        if ($args->hasChangedField('userIds')) {
-            $oldUserIds = $args->getOldValue('userIds');
-            $newUserIds = $args->getNewValue('userIds');
+        /** @var string[] $oldUserIds */
+        $oldUserIds = $args->getOldValue('userIds');
+        /** @var string[] $newUserIds */
+        $newUserIds = $args->getNewValue('userIds');
 
-            // be careful with the ordering in array_diff
-            $userIdsRemoved = array_diff($oldUserIds, $newUserIds);
-            $objectManager = $args->getObjectManager();
-
-            $this->removeMessages($userIdsRemoved, $objectManager);
-            $this->removeLabels($userIdsRemoved, $objectManager);
-            $this->removeHistories($userIdsRemoved, $objectManager);
-            $this->removeGmailIds($userIdsRemoved, $objectManager);
+        foreach($oldUserIds as $oldUserId) {
+            if (!in_array($oldUserId, $newUserIds)) {
+                $this->removeTheseUserIds[] = $oldUserId;
+            }
         }
     }
 
@@ -101,73 +102,48 @@ class CleanUpMessagesListener
     public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        if (! ($entity instanceof SyncSetting)) {
+        if (!($entity instanceof SyncSetting)) {
             return;
         }
 
-        $userIdsRemoved = $entity->getUserIds();
-        $objectManager = $args->getObjectManager();
-        $this->removeMessages($userIdsRemoved, $objectManager);
-        $this->removeLabels($userIdsRemoved, $objectManager);
-        $this->removeHistories($userIdsRemoved, $objectManager);
-        $this->removeGmailIds($userIdsRemoved, $objectManager);
-    }
-
-    /**
-     * @param string[] $userIdsRemoved
-     * @param ObjectManager $objectManager
-     */
-    private function removeMessages(array $userIdsRemoved, ObjectManager $objectManager)
-    {
-        foreach ($objectManager->getRepository($this->messageClass)->getAllFromUserIds($userIdsRemoved) as $email) {
-            $this->removeTheseEntities[] = $email;
-        }
-    }
-
-    /**
-     * @param string[] $userIdsRemoved
-     * @param ObjectManager $objectManager
-     */
-    private function removeLabels(array $userIdsRemoved, ObjectManager $objectManager)
-    {
-        foreach ($objectManager->getRepository($this->labelClass)->getAllFromUserIds($userIdsRemoved) as $label) {
-            $this->removeTheseEntities[] = $label;
-        }
-    }
-
-    /**
-     * @param string[] $userIdsRemoved
-     * @param ObjectManager $objectManager
-     */
-    private function removeHistories(array $userIdsRemoved, ObjectManager $objectManager)
-    {
-        foreach ($objectManager->getRepository($this->historyClass)->getAllFromUserIds($userIdsRemoved) as $history) {
-            $this->removeTheseEntities[] = $history;
-        }
-    }
-
-    /**
-     * @param string[] $userIdsRemoved
-     * @param ObjectManager $objectManager
-     */
-    private function removeGmailIds(array $userIdsRemoved, ObjectManager $objectManager)
-    {
-        foreach ($objectManager->getRepository($this->gmailIdsClass)->getAllFromUserIds($userIdsRemoved) as $gmailIdsForUser) {
-            $this->removeTheseEntities[] = $gmailIdsForUser;
-        }
+        $this->removeTheseUserIds = $entity->getUserIds();
     }
 
     /**
      * @param PostFlushEventArgs $args
      */
-    public function postFlush(PostFlushEventArgs $args){
-        if (! empty($this->removeTheseEntities)) {
-            $em = $args->getEntityManager();
-            foreach ($this->removeTheseEntities as $entity) {
-                $em->remove($entity);
-            }
-            $this->removeTheseEntities = []; // prevents doctrine exception
-            $em->flush();
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        if (count($this->removeTheseUserIds) === 0) {
+            return;
         }
+
+        $em = $args->getEntityManager();
+
+        /** @var GmailMessageRepository $messageRepository */
+        $messageRepository = $em->getRepository($this->messageClass);
+        foreach ($messageRepository->getAllFromUserIds($this->removeTheseUserIds) as $message) {
+            $em->remove($message);
+        }
+
+        /** @var GmailLabelRepository $labelRepository */
+        $labelRepository = $em->getRepository($this->labelClass);
+        foreach ($labelRepository->getAllFromUserIds($this->removeTheseUserIds) as $label) {
+            $em->remove($label);
+        }
+
+        /** @var GmailHistoryRepository $historyRepository */
+        $historyRepository = $em->getRepository($this->historyClass);
+        foreach ($historyRepository->getAllFromUserIds($this->removeTheseUserIds) as $history) {
+            $em->remove($history);
+        }
+
+        /** @var GmailIdsRepository $idsRepository */
+        $idsRepository = $em->getRepository($this->gmailIdsClass);
+        foreach ($idsRepository->getAllFromUserIds($this->removeTheseUserIds) as $ids) {
+            $em->remove($ids);
+        }
+
+        $em->flush();
     }
 }
