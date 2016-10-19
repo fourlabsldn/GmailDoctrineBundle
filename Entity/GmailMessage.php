@@ -92,6 +92,18 @@ class GmailMessage extends BaseGmailMessage
     protected $snippet;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     * @var string
+     */
+    protected $bodyPlainText;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @var string
+     */
+    protected $bodyHtml;
+
+    /**
      * GmailMessage constructor.
      */
     public function __construct()
