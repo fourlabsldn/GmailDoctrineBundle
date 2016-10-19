@@ -43,7 +43,7 @@ class CleanUpMessagesListener
     /**
      * @var array
      *
-     * We will be removing entities, but doctrine doesn't encourage doing this in the same flush.
+     * We will be removing entities for these userIds, but doctrine doesn't encourage doing this in the same flush.
      * @link http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preupdate
      * "PREUPDATE: Changes to associations of the updated entity are never allowed in this event, since Doctrine cannot guarantee to correctly handle
      * referential integrity at this point of the flush operation. This event has a powerful feature however, it is executed with a PreUpdateEventArgs
@@ -78,8 +78,8 @@ class CleanUpMessagesListener
     public function preUpdate(PreUpdateEventArgs $args)
     {
         if (
-            !($args->getObject() instanceof SyncSetting)
-            || !$args->hasChangedField('userIds')
+            (!($args->getObject() instanceof SyncSetting)) ||
+            (!$args->hasChangedField('userIds'))
         ) {
             return;
         }
@@ -89,11 +89,7 @@ class CleanUpMessagesListener
         /** @var string[] $newUserIds */
         $newUserIds = $args->getNewValue('userIds');
 
-        foreach($oldUserIds as $oldUserId) {
-            if (!in_array($oldUserId, $newUserIds)) {
-                $this->removeTheseUserIds[] = $oldUserId;
-            }
-        }
+        $this->removeTheseUserIds = array_diff($oldUserIds, $newUserIds);
     }
 
     /**
