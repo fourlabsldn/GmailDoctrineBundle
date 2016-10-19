@@ -94,39 +94,40 @@ class SyncWrapper
     }
 
     /**
-     * @param int $messagesToSyncPerUser
+     * @param int $syncLimitPerUser
      */
-    public function sync(int $messagesToSyncPerUser)
+    public function sync(int $syncLimitPerUser)
     {
         $domain = $this->oAuth->resolveDomain();
         $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
 
-        if ($syncSetting instanceof SyncSetting) {
-            foreach ($syncSetting->getUserIds() as $userId) {
-                $this->syncByUserId($userId, $messagesToSyncPerUser);
-            }
+        if (!($syncSetting instanceof SyncSetting)) {
+            return;
+        }
+        foreach ($syncSetting->getUserIds() as $userId) {
+            $this->syncByUserId($userId, $syncLimitPerUser);
         }
     }
 
     /**
      * @param string $email
-     * @param $messagesToSync
+     * @param $syncLimit
      */
-    public function syncEmail(string $email, int $messagesToSync)
+    public function syncEmail(string $email, int $syncLimit)
     {
         $domain = $this->oAuth->resolveDomain();
         $userId = $this->directory->resolveUserIdFromEmail($email, $domain, Directory::MODE_RESOLVE_PRIMARY_PLUS_ALIASES);
-        $this->syncByUserId($userId, $messagesToSync);
+        $this->syncByUserId($userId, $syncLimit);
     }
 
     /**
      * @param string $userId
-     * @param int $messagesToSync
+     * @param int $syncLimit
      */
-    public function syncByUserId(string $userId, int $messagesToSync)
+    public function syncByUserId(string $userId, int $syncLimit)
     {
         $this->syncGmailIdsByUserId($userId);
-        $this->syncMessagesByUserId($userId, $messagesToSync);
+        $this->syncMessagesByUserId($userId, $syncLimit);
     }
 
     /**
@@ -144,15 +145,14 @@ class SyncWrapper
 
     /**
      * @param string $userId
-     * @param int $messagesToSync
+     * @param int $syncLimit
      */
-    private function syncMessagesByUserId(string $userId, int $messagesToSync)
+    private function syncMessagesByUserId(string $userId, int $syncLimit)
     {
-        $this->syncGmailIdsByUserId($userId);
         $persistedGmailIds = $this->gmailIdsRepository->findOneByUserId($userId);
         if ($persistedGmailIds instanceof  GmailIdsInterface) {
             $allIdsToSync = $persistedGmailIds->getGmailIds();
-            $idsToSyncRightNow = array_slice($allIdsToSync, 0, $messagesToSync);
+            $idsToSyncRightNow = $persistedGmailIds->getGmailIds($syncLimit);
 
             /**
              * Note: we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
