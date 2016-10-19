@@ -3,7 +3,7 @@
 namespace FL\GmailDoctrineBundle\Form;
 
 use FL\GmailDoctrineBundle\Form\Type\FromType;
-use FL\GmailDoctrineBundle\Model\SendEmail;
+use FL\GmailDoctrineBundle\Model\OutgoingEmail;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -11,10 +11,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class SendEmailType
+ * Class OutgoingEmailType
  * @package FL\GmailDoctrineBundle\Form
  */
-class SendEmailType extends AbstractType
+class OutgoingEmailType extends AbstractType
 {
 
     /**
@@ -38,6 +38,6 @@ class SendEmailType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['data_class' => SendEmail::class, ]);
+        $resolver->setDefaults(['data_class' => OutgoingEmail::class, ]);
     }
 }

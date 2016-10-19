@@ -3,15 +3,13 @@
 namespace FL\GmailDoctrineBundle\Model;
 
 use FL\GmailBundle\Swift\SwiftGmailMessage;
-use FL\GmailBundle\Util\EmailTransformations;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * Class Email
+ * Class OutgoingEmail
  * @package FL\GmailDoctrineBundle\Model
  */
-class SendEmail
+class OutgoingEmail
 {
     /**
      * @var string
@@ -21,8 +19,11 @@ class SendEmail
     private $from;
 
     /**
-     * @var string
-     * @Assert\NotBlank()
+     * @var array
+     * @Assert\Count(min=1, minMessage="This field requires at least one email address")
+     * @Assert\All(
+     *     @Assert\Email
+     * )
      */
     private $to;
 
@@ -69,7 +70,7 @@ class SendEmail
     }
 
     /**
-     * @return string|null
+     * @return array|null
      */
     public function getTo()
     {
@@ -77,12 +78,23 @@ class SendEmail
     }
 
     /**
-     * @param string $to
-     * @return SendEmail
+     * @param array $to
+     * @return $this
      */
-    public function setTo(string $to): SendEmail
+    public function setTo(array $to)
     {
         $this->to = $to;
+
+        return $this;
+    }
+
+    /**
+     * @param string $to CSV
+     * @return SendEmail
+     */
+    public function setToCSV(string $to): SendEmail
+    {
+        $this->to = array_map('trim', explode(',', $to));
 
         return $this;
     }
@@ -164,32 +176,18 @@ class SendEmail
     }
 
     /**
-     * @Assert\Callback
-     * @param ExecutionContextInterface $context
-     */
-    public function validate(ExecutionContextInterface $context)
-    {
-        if (count(self::getMultipleEmailsFromString($this->to)) === 0) {
-            $context
-                ->buildViolation('This field requires at least one valid email.')
-                ->atPath('to')
-                ->addViolation()
-            ;
-        }
-    }
-
-    /**
-     * @param SendEmail $sendEmail
      * @return SwiftGmailMessage
      */
-    final public static function convertToSwiftGmailMessage(SendEmail $sendEmail)
+    final public function getAsSwiftGmailMessage()
     {
-        $swiftMessage = SwiftGmailMessage::newInstance($sendEmail->getSubject());
-        $swiftMessage->setBody($sendEmail->getBodyHtml(), 'text/html');
-        $swiftMessage->addPart($sendEmail->getBodyPlainText(), 'text/plain');
-        $swiftMessage->setFrom($sendEmail->getFrom());
-        $swiftMessage->setTo(EmailTransformations::getMultipleEmailsFromString($sendEmail->getTo(), true));
-        $swiftMessage->setThreadId($sendEmail->getThreadId());
+        $swiftMessage = SwiftGmailMessage::newInstance($this->getSubject());
+        $swiftMessage
+            ->setBody($this->getBodyHtml(), 'text/html')
+            ->addPart($this->getBodyPlainText(), 'text/plain')
+            ->setFrom($this->getFrom())
+            ->setTo($this->getTo())
+            ->setThreadId($this->getThreadId())
+        ;
 
         return $swiftMessage;
     }
