@@ -94,16 +94,16 @@ class SyncWrapper
     }
 
     /**
-     * @param int $messagesToSync
+     * @param int $messagesToSyncPerUser
      */
-    public function sync(int $messagesToSync)
+    public function sync(int $messagesToSyncPerUser)
     {
         $domain = $this->oAuth->resolveDomain();
         $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
 
         if ($syncSetting instanceof SyncSetting) {
             foreach ($syncSetting->getUserIds() as $userId) {
-                $this->syncByUserId($userId, $messagesToSync);
+                $this->syncByUserId($userId, $messagesToSyncPerUser);
             }
         }
     }
@@ -152,14 +152,20 @@ class SyncWrapper
         $persistedGmailIds = $this->gmailIdsRepository->findOneByUserId($userId);
         if ($persistedGmailIds instanceof  GmailIdsInterface) {
             $allIdsToSync = $persistedGmailIds->getGmailIds();
-            // note, we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
             $idsToSyncRightNow = array_slice($allIdsToSync, 0, $messagesToSync);
 
+            /**
+             * Note: we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
+             * such that we are syncing the latest messages first.
+             * This is important, such that when we call syncs after sending emails, or making updates
+             * we update the latest thing that happened.
+             */
             $persistedGmailIds->setGmailIds($idsToSyncRightNow);
             $this->syncMessages->syncFromGmailIds($persistedGmailIds);
 
             // be careful with the ordering in array_diff
-            $persistedGmailIds->setGmailIds(array_diff($allIdsToSync, $idsToSyncRightNow));
+            $idsToSyncLater = array_diff($allIdsToSync, $idsToSyncRightNow);
+            $persistedGmailIds->setGmailIds(is_array($idsToSyncLater) ? $idsToSyncLater : []);
             $this->entityManager->persist($persistedGmailIds);
         }
 

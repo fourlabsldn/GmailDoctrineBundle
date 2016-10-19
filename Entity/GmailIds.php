@@ -20,9 +20,8 @@ class GmailIds extends BaseGmailIds
     protected $userId;
 
     /**
-     * @ORM\Column(type="simple_array", nullable=false)
-     * @Assert\NotNull
-     * @var string[]
+     * @ORM\Column(type="simple_array", nullable=true)
+     * @var string[]|null
      */
-    protected $gmailIds;
+    protected $gmailIds = [];
 }
