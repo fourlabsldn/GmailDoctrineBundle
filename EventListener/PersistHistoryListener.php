@@ -44,18 +44,23 @@ class PersistHistoryListener
         $newHistory = $event->getHistory();
         $entityManager = $this->entityManager;
 
-        if ($newHistory->getHistoryId() && $newHistory->getUserId()) {
-            $oldHistory = $this->historyRepository->findOneBy(['userId'=> $newHistory->getUserId()]);
+        $oldHistory = $this->historyRepository->findOneBy(['userId'=> $newHistory->getUserId()]);
 
-            if ($oldHistory instanceof GmailHistoryInterface) { // already have a history in the db for this user
-                if ($newHistory->getHistoryId() > $oldHistory->getHistoryId()) {
-                    $oldHistory->setHistoryId($newHistory->getHistoryId());
-                }
-                $entityManager->persist($oldHistory);
-            } else { //no history in the db for this user, create a new one
-                $entityManager->persist($newHistory);
-            }
-            $entityManager->flush();
+        if (
+            (!is_int($newHistory->getHistoryId())) ||
+            (!is_string($newHistory->getUserId()))
+        ) {
+            return;
         }
+
+        if ($oldHistory instanceof GmailHistoryInterface) { // already have a history in the db for this user
+            if ($newHistory->getHistoryId() > $oldHistory->getHistoryId()) {
+                $oldHistory->setHistoryId($newHistory->getHistoryId());
+            }
+            $entityManager->persist($oldHistory);
+        } else { //no history in the db for this user, create a new one
+            $entityManager->persist($newHistory);
+        }
+        $entityManager->flush();
     }
 }
