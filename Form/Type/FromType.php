@@ -39,7 +39,7 @@ class FromType extends AbstractType
 
         if ($syncSetting instanceof SyncSetting) {
             foreach ($syncSetting->getUserIds() as $userId) {
-                $emailsOfUserId = $directory->resolveEmailsFromUserId($userId, $domain, Directory::MODE_RESOLVE_PRIMARY_ONLY);
+                $emailsOfUserId = $directory->resolveEmailsFromUserId($userId, Directory::MODE_RESOLVE_PRIMARY_ONLY);
                 if (isset($emailsOfUserId[0])) {
                     $email = $emailsOfUserId[0];
                     $emailChoices[$email] = $email;

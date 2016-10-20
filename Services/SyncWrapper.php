@@ -63,7 +63,6 @@ class SyncWrapper
     private $gmailIdsRepository;
 
     /**
-     * Oauth constructor.
      * @param SyncGmailIds $syncGmailIds
      * @param SyncMessages $syncMessages
      * @param OAuth $oAuth
@@ -115,8 +114,7 @@ class SyncWrapper
      */
     public function syncEmail(string $email, int $syncLimit)
     {
-        $domain = $this->oAuth->resolveDomain();
-        $userId = $this->directory->resolveUserIdFromEmail($email, $domain, Directory::MODE_RESOLVE_PRIMARY_PLUS_ALIASES);
+        $userId = $this->directory->resolveUserIdFromEmail($email, Directory::MODE_RESOLVE_PRIMARY_PLUS_ALIASES);
         $this->syncByUserId($userId, $syncLimit);
     }
 

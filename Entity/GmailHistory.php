@@ -27,4 +27,12 @@ class GmailHistory extends BaseGmailHistory
      * @var string
      */
     protected $historyId;
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="string", nullable=false, unique=true)
+     * @Assert\NotBlank()
+     * @var string
+     */
+    protected $domain = '';
 }
