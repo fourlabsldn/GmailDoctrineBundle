@@ -239,13 +239,4 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     {
         return $this->doesNotHaveLabel('TRASH');
     }
-
-    /**
-     * @inheritdoc
-     */
-    public static function createFromGmailApiMessage(\Google_Service_Gmail_Message $gmailApiMessage, array $labels, string $userId): GmailMessageInterface
-    {
-        return parent::createFromGmailApiMessage($gmailApiMessage, $labels, $userId);
-    }
-
 }
