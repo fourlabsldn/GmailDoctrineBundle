@@ -7,8 +7,8 @@ services:
     fl_gmail_doctrine.sync_wrapper:
         class: FL\GmailDoctrineBundle\Services\SyncWrapper
         arguments:
-            - "@fl_gmail.sync_helper"
-            - "@fl_gmail.sync_manager"
+            - "@fl_gmail.sync_gmail_ids"
+            - "@fl_gmail.sync_messages"
             - "@fl_gmail.oauth"
             - "@fl_gmail.directory"
             - "@doctrine.orm.entity_manager"
