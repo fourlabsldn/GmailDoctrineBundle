@@ -44,7 +44,7 @@ class GoogleClientStatusWrapper
      * @param string $domain
      * @return bool
      */
-    public function isAuthenticatedAndUsersAreSetup(string $domain)
+    public function isSetupForDomain(string $domain)
     {
         $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
 
@@ -55,6 +55,23 @@ class GoogleClientStatusWrapper
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSetupForAtLeastOneDomain()
+    {
+        $syncSetting = $this->syncSettingRepository->findOneBy([]);
+
+        if (
+            ($this->clientStatus->isAuthenticated() === true) &&
+            ($syncSetting instanceof SyncSetting)
+        ) {
+            return true;
+        }
+        return false;
+
     }
 
 }
