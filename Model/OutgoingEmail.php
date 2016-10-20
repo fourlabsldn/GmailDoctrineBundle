@@ -60,9 +60,9 @@ class OutgoingEmail
 
     /**
      * @param string $from
-     * @return SendEmail
+     * @return OutgoingEmail
      */
-    public function setFrom(string $from): SendEmail
+    public function setFrom(string $from): OutgoingEmail
     {
         $this->from = $from;
 
@@ -90,9 +90,9 @@ class OutgoingEmail
 
     /**
      * @param string $to CSV
-     * @return SendEmail
+     * @return OutgoingEmail
      */
-    public function setToCSV(string $to): SendEmail
+    public function setToCSV(string $to): OutgoingEmail
     {
         $this->to = array_map('trim', explode(',', $to));
 
@@ -109,9 +109,9 @@ class OutgoingEmail
 
     /**
      * @param string $subject
-     * @return SendEmail
+     * @return OutgoingEmail
      */
-    public function setSubject(string $subject): SendEmail
+    public function setSubject(string $subject): OutgoingEmail
     {
         $this->subject = $subject;
 
@@ -128,9 +128,9 @@ class OutgoingEmail
 
     /**
      * @param string $bodyHtml
-     * @return SendEmail
+     * @return OutgoingEmail
      */
-    public function setBodyHtml(string $bodyHtml): SendEmail
+    public function setBodyHtml(string $bodyHtml): OutgoingEmail
     {
         $this->bodyHtml = $bodyHtml;
 
@@ -147,9 +147,9 @@ class OutgoingEmail
 
     /**
      * @param string $bodyPlainText
-     * @return SendEmail
+     * @return OutgoingEmail
      */
-    public function setBodyPlainText(string $bodyPlainText): SendEmail
+    public function setBodyPlainText(string $bodyPlainText): OutgoingEmail
     {
         $this->bodyPlainText = $bodyPlainText;
 
@@ -166,9 +166,9 @@ class OutgoingEmail
 
     /**
      * @param string|null $threadId
-     * @return SendEmail
+     * @return OutgoingEmail
      */
-    public function setThreadId($threadId): SendEmail
+    public function setThreadId($threadId): OutgoingEmail
     {
         $this->threadId = $threadId;
 

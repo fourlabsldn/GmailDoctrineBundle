@@ -16,7 +16,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OutgoingEmailType extends AbstractType
 {
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
