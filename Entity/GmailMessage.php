@@ -104,6 +104,14 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $bodyHtml;
 
     /**
+     * @ORM\Id
+     * @ORM\Column(type="string", nullable=false, unique=true)
+     * @Assert\NotBlank()
+     * @var string
+     */
+    protected $domain = '';
+
+    /**
      * GmailMessage constructor.
      */
     public function __construct()
