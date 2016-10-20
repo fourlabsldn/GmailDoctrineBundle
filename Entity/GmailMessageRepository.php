@@ -17,6 +17,7 @@ class  GmailMessageRepository extends EntityRepository
      * @param int|null $limit
      * @param int|null $offset
      * @param string|null $dateSort
+     * @param string|null $domain
      * @param string|null $userId
      * @param string[]|null $labelNames
      * @param string|null $from
@@ -28,12 +29,13 @@ class  GmailMessageRepository extends EntityRepository
         int $limit = null,
         int $offset = null,
         string $dateSort = null,
+        string $domain = null,
         string $userId = null,
         array $labelNames = null,
         string $from = null,
         string $to = null
     ) {
-        $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $userId, $labelNames, $from, $to);
+        $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $domain, $userId, $labelNames, $from, $to);
 
         $dql = 'SELECT message, labels FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
         $parameters = [];
@@ -41,7 +43,7 @@ class  GmailMessageRepository extends EntityRepository
 
         // passing labelNames as null here ensures each message is hydrated with all its labels
         // the label filtering was already done in partials
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, null, null, $from, $to);
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $domain, $userId, null, null, $from, $to);
 
         if (count($partials) > 0) {
             $dql .= ' AND ( ';
@@ -68,6 +70,7 @@ class  GmailMessageRepository extends EntityRepository
     /**
      * @see GmailMessageRepository::uniqueByThreadPartials()
      *
+     * @param string|null $domain
      * @param string|null $userId
      * @param string[]|null $labelNames
      * @param string|null $from
@@ -76,19 +79,20 @@ class  GmailMessageRepository extends EntityRepository
      * @return int
      */
     public function countUniqueByThread(
+        string $domain = null,
         string $userId = null,
         array $labelNames = null,
         string $from = null,
         string $to = null
-    )
-    {
-        return count($this->uniqueByThreadPartials(null, null, null, $userId, $labelNames, $from, $to));
+    ) {
+        return count($this->uniqueByThreadPartials(null, null, null, $domain, $userId, $labelNames, $from, $to));
     }
 
     /**
      * @param int|null $limit
      * @param int|null $offset
      * @param string|null $dateSort ('ASC', 'DESC', null)
+     * @param string|null $domain (null = all results independent of domain)
      * @param string|null $userId (null = all results independent of userId)
      * @param string[]|null $labelNames (null = all results independent of labelName)
      * @param string|null $from (null = all results independent of from)
@@ -116,18 +120,18 @@ class  GmailMessageRepository extends EntityRepository
         int $limit = null,
         int $offset = null,
         string $dateSort = null,
+        string $domain = null,
         string $userId = null,
         array $labelNames = null,
         string $from = null,
         string $to = null
-    )
-    {
+    ) {
         $dql ='SELECT labels.userId, message.threadId, message.userId, max(message.sentAt) AS latestSentAt FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
 
         $parameters = [];
         $nextParameterKey = 0;
 
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $userId, $labelNames, $from, $to);
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $domain, $userId, $labelNames, $from, $to);
         $dql .= ' GROUP BY message.threadId, message.userId, labels.userId ';
 
         $this->uniqueByThreadSortClause($dql, 'latestSentAt', $dateSort);
@@ -152,6 +156,7 @@ class  GmailMessageRepository extends EntityRepository
      * @param string $dql
      * @param array $parameters
      * @param int $nextParameterKey
+     * @param string|null $domain
      * @param string|null $userId
      * @param array|null $labelNames
      * @param string|null $from
@@ -161,6 +166,7 @@ class  GmailMessageRepository extends EntityRepository
         string &$dql,
         array &$parameters,
         int &$nextParameterKey,
+        string $domain = null,
         string $userId = null,
         array $labelNames = null,
         string $from = null,
@@ -189,6 +195,11 @@ class  GmailMessageRepository extends EntityRepository
         if (is_string($to)) {
             $dql .= sprintf(' message.to LIKE ?%d  AND ', $nextParameterKey);
             $parameters[] = '%' . $to .'%';
+            $nextParameterKey++;
+        }
+        if (is_string($domain)) {
+            $dql .= sprintf(' message.domain = ?%d  AND ', $nextParameterKey);
+            $parameters[] = $domain;
             $nextParameterKey++;
         }
         $dql = rtrim($dql, ' AND ');
