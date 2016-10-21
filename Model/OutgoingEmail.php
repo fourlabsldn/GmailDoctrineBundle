@@ -4,6 +4,7 @@ namespace FL\GmailDoctrineBundle\Model;
 
 use FL\GmailBundle\Swift\SwiftGmailMessage;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Class OutgoingEmail
@@ -89,12 +90,20 @@ class OutgoingEmail
     }
 
     /**
-     * @param string $to CSV
+     * @return array
+     */
+    public function getToCSV()
+    {
+        return implode(",", $this->to);
+    }
+
+    /**
+     * @param string $toCSV
      * @return OutgoingEmail
      */
-    public function setToCSV(string $to): OutgoingEmail
+    public function setToCSV(string $toCSV): OutgoingEmail
     {
-        $this->to = array_map('trim', explode(',', $to));
+        $this->to = array_map('trim', explode(',', $toCSV));
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace FL\GmailDoctrineBundle\Form;
 use FL\GmailDoctrineBundle\Form\Type\FromType;
 use FL\GmailDoctrineBundle\Model\OutgoingEmail;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,6 +31,16 @@ class OutgoingEmailType extends AbstractType
             ->add('bodyHtml', TextareaType::class, ['required'=>false])
             ->add('bodyPlainText', TextareaType::class, ['required'=>false])
         ;
+        $builder->get('to')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($toArray) {
+                    return implode(', ', $toArray);
+                },
+                function ($toString) {
+                    return array_map('trim', explode(',', $toString));
+                }
+            ))
+        ;
     }
 
     /**
@@ -37,6 +48,6 @@ class OutgoingEmailType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['data_class' => OutgoingEmail::class, ]);
+        $resolver->setDefault('data_class', OutgoingEmail::class);
     }
 }

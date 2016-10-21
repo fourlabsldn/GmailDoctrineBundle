@@ -34,19 +34,19 @@ class FromType extends AbstractType
     public function __construct(OAuth $oAuth, Directory $directory, EntityManagerInterface $entityManager, string $syncSettingClass)
     {
         $domain = $oAuth->resolveDomain();
-        $emailChoices = [];
         $syncSetting = $entityManager->getRepository($syncSettingClass)->findOneBy(['domain'=>$domain]);
 
-        if ($syncSetting instanceof SyncSetting) {
-            foreach ($syncSetting->getUserIds() as $userId) {
-                $emailsOfUserId = $directory->resolveEmailsFromUserId($userId, Directory::MODE_RESOLVE_PRIMARY_ONLY);
-                if (isset($emailsOfUserId[0])) {
-                    $email = $emailsOfUserId[0];
-                    $emailChoices[$email] = $email;
-                }
-            }
-        } else {
+        if (!($syncSetting instanceof SyncSetting)) {
             throw new MissingSyncSettingException("No " . SyncSetting::class . " persisted yet.");
+        }
+
+        $emailChoices = [];
+        foreach ($syncSetting->getUserIds() as $userId) {
+            $emailsOfUserId = $directory->resolveEmailsFromUserId($userId, Directory::MODE_RESOLVE_PRIMARY_ONLY);
+            if (array_key_exists(0, $emailsOfUserId)) {
+                $email = $emailsOfUserId[0];
+                $emailChoices[$email] = $email;
+            }
         }
 
         $this->emailChoices = $emailChoices;
@@ -57,9 +57,7 @@ class FromType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'choices' => $this->emailChoices,
-        ]);
+        $resolver->setDefault('choices', $this->emailChoices);
     }
 
     /**
