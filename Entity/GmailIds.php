@@ -26,8 +26,7 @@ class GmailIds extends BaseGmailIds
     protected $gmailIds = [];
 
     /**
-     * @ORM\Id
-     * @ORM\Column(type="string", nullable=false, unique=true)
+     * @ORM\Column(type="string", nullable=false)
      * @Assert\NotBlank()
      * @var string
      */
