@@ -33,7 +33,10 @@ class OutgoingEmailType extends AbstractType
         ;
         $builder->get('to')
             ->addModelTransformer(new CallbackTransformer(
-                function ($toArray) {
+                function ($toArray) use ($builder) {
+                    if (!$toArray) {
+                        return '';
+                    }
                     return implode(', ', $toArray);
                 },
                 function ($toString) {

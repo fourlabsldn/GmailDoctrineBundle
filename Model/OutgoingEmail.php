@@ -23,7 +23,7 @@ class OutgoingEmail
      * @var array
      * @Assert\Count(min=1, minMessage="This field requires at least one email address")
      * @Assert\All(
-     *     @Assert\Email
+     *     @Assert\Email(message="This field does not contain valid email addresses.")
      * )
      */
     private $to;
