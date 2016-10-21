@@ -17,6 +17,7 @@ services:
             - "%fl_gmail.gmail_ids_class%"
     fl_gmail_doctrine.client_status_wrapper:
         class: FL\GmailDoctrineBundle\Services\GoogleClientStatusWrapper
+        lazy: true
         arguments:
             - "@fl_gmail.client_status"
             - "@doctrine.orm.entity_manager"
