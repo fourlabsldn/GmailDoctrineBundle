@@ -53,10 +53,15 @@ class SyncCommand extends Command
         $output->writeln('Starting...');
         try {
             $this->syncWrapper->sync(35); // remember, this is per user!
-        } catch (\Exception $e) {
-            $output->writeln('Exception! Did you make sure there\'s an authenticated Google Apps account for this application? ');
-            throw $e;
+        } catch (\Google_Service_Exception $e) {
+            if ($e->getErrors()[0]['reason'] === 'authError') {
+                $output->writeln('Auth error. Did you make sure there\'s an authenticated Google Apps account for this application?');
+                return;
+            } else {
+                throw $e;
+            }
         }
+
         $output->writeln('Finished...');
     }
 }
