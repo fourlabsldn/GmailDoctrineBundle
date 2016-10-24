@@ -24,7 +24,9 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('sync_setting_class')
                     ->cannotBeEmpty()
-                    ->defaultValue('FL\GmailDoctrineBundle\Entity\SyncSetting')
+                ->end()
+                ->scalarNode('credentials_class')
+                    ->cannotBeEmpty()
                 ->end()
             ->end()
         ;

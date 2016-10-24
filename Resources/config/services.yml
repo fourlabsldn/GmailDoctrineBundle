@@ -2,6 +2,7 @@ imports:
     - { resource: 'services/command.yml' }
     - { resource: 'services/form.yml' }
     - { resource: 'services/listeners.yml' }
+    - { resource: 'services/storage.yml' }
 
 services:
     fl_gmail_doctrine.sync_wrapper:
