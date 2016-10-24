@@ -19,6 +19,11 @@ class CredentialsStorage implements CredentialsStorageInterface
     private $entityManager;
 
     /**
+     * @var string
+     */
+    private $credentialsClass;
+    
+    /**
      * @var EntityRepository
      */
     private $credentialsRepository;
@@ -31,6 +36,7 @@ class CredentialsStorage implements CredentialsStorageInterface
     public function __construct(EntityManagerInterface $entityManager, string $credentialsClass)
     {
         $this->entityManager = $entityManager;
+        $this->credentialsClass = $credentialsClass;
         $this->credentialsRepository = $entityManager->getRepository($credentialsClass);
     }
 
@@ -41,7 +47,7 @@ class CredentialsStorage implements CredentialsStorageInterface
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            $credentials = new Credentials();
+            $credentials = new $this->credentialsClass;
         }
 
         $credentials->setTokenArray($tokenArray);
@@ -69,7 +75,7 @@ class CredentialsStorage implements CredentialsStorageInterface
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            $credentials = new Credentials();
+            $credentials = new $this->credentialsClass;
         }
 
         $credentials->setAuthCode($authCode);
@@ -97,7 +103,7 @@ class CredentialsStorage implements CredentialsStorageInterface
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            $credentials = new Credentials();
+            $credentials = new $this->credentialsClass;
         }
 
         $credentials->setAuthCode(null);

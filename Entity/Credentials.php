@@ -12,7 +12,8 @@ class Credentials
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="id", nullable=false, unique=true)
+     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @var int|null
      */
     protected $id;
