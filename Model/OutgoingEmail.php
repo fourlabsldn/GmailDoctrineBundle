@@ -3,6 +3,7 @@
 namespace FL\GmailDoctrineBundle\Model;
 
 use FL\GmailBundle\Swift\SwiftGmailMessage;
+use Html2Text\Html2Text;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -141,7 +142,8 @@ class OutgoingEmail
     public function setBodyHtml(string $bodyHtml): OutgoingEmail
     {
         $this->bodyHtml = $bodyHtml;
-        $this->bodyPlainText = $bodyHtml;
+        $html = new Html2Text($bodyHtml);
+        $this->bodyPlainText = $html->getText();
 
         return $this;
     }
