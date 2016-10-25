@@ -41,6 +41,14 @@ class GoogleClientStatusWrapper
     }
 
     /**
+     * @return bool
+     */
+    public function isAuthenticated()
+    {
+        return $this->clientStatus->isAuthenticated();
+    }
+
+    /**
      * @param string $domain
      * @return bool
      */
