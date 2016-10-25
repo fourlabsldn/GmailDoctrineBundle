@@ -42,7 +42,6 @@ class OutgoingEmail
 
     /**
      * @var string
-     * @Assert\NotBlank()
      */
     private $bodyPlainText;
 
@@ -142,6 +141,7 @@ class OutgoingEmail
     public function setBodyHtml(string $bodyHtml): OutgoingEmail
     {
         $this->bodyHtml = $bodyHtml;
+        $this->bodyPlainText = $bodyHtml;
 
         return $this;
     }
@@ -152,17 +152,6 @@ class OutgoingEmail
     public function getBodyPlainText()
     {
         return $this->bodyPlainText;
-    }
-
-    /**
-     * @param string $bodyPlainText
-     * @return OutgoingEmail
-     */
-    public function setBodyPlainText(string $bodyPlainText): OutgoingEmail
-    {
-        $this->bodyPlainText = $bodyPlainText;
-
-        return $this;
     }
 
     /**
@@ -191,8 +180,8 @@ class OutgoingEmail
     {
         $swiftMessage = SwiftGmailMessage::newInstance($this->getSubject());
         $swiftMessage
-            ->setBody($this->getBodyHtml(), 'text/html')
-            ->addPart($this->getBodyPlainText(), 'text/plain')
+            ->setBody($this->getBodyPlainText(), 'text/plain')
+            ->addPart($this->getBodyHtml(), 'text/html')
             ->setFrom($this->getFrom())
             ->setTo($this->getTo())
             ->setThreadId($this->getThreadId())

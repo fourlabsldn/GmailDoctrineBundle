@@ -29,7 +29,6 @@ class OutgoingEmailType extends AbstractType
             ->add('subject', TextType::class, ['required'=>true])
             ->add('threadId', TextType::class, ['required'=>false])
             ->add('bodyHtml', TextareaType::class, ['required'=>false])
-            ->add('bodyPlainText', TextareaType::class, ['required'=>false])
         ;
         $builder->get('to')
             ->addModelTransformer(new CallbackTransformer(
