@@ -185,65 +185,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     {
         $criteria = Criteria::create();
         $criteria->where(Criteria::expr()->eq('name', $name));
+
         return ($this->labels->matching($criteria)->count() > 0);
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function doesNotHaveLabel(string $name): bool
-    {
-        $criteria = Criteria::create();
-        $criteria->where(Criteria::expr()->eq('name', $name));
-        return ($this->labels->matching($criteria)->count() === 0);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRead(): bool
-    {
-        return $this->doesNotHaveLabel('UNREAD');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUnread(): bool
-    {
-        return $this->hasLabel('UNREAD');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInbox(): bool
-    {
-        return $this->hasLabel('INBOX');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSent(): bool
-    {
-        return $this->hasLabel('SENT');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTrash(): bool
-    {
-        return $this->hasLabel('TRASH');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNotTrash(): bool
-    {
-        return $this->doesNotHaveLabel('TRASH');
     }
 }
