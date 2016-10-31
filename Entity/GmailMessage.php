@@ -168,7 +168,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @return GmailMessageInterface
+     * @inheritdoc
      */
     public function clearLabels(): GmailMessageInterface
     {
@@ -178,14 +178,32 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @param string $name
-     * @return bool
+     * @inheritdoc
      */
-    public function hasLabel(string $name): bool
+    public function getLabelByName(string $name)
     {
         $criteria = Criteria::create();
         $criteria->where(Criteria::expr()->eq('name', $name));
 
-        return ($this->labels->matching($criteria)->count() > 0);
+        $labels = $this->labels->matching($criteria);
+
+        if (
+            ($labels->count() > 0) &&
+            ($labels->first() instanceof GmailLabelInterface)
+        ) {
+            return $labels->first();
+        };
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasLabel(string $name): bool
+    {
+        if ($this->getLabelByName($name) instanceof GmailLabelInterface) {
+            return true;
+        }
+        return false;
     }
 }
