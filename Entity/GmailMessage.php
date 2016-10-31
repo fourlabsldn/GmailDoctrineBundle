@@ -81,7 +81,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="GmailLabel", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="GmailLabel", cascade={"persist", "detach"})
      */
     protected $labels;
 
