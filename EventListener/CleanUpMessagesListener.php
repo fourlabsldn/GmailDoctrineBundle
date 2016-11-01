@@ -140,6 +140,13 @@ class CleanUpMessagesListener
             $em->remove($ids);
         }
 
+        /**
+         * Doctrine doesn't like flush called in postFlush
+         * For instance, it chokes if we don't empty array properties
+         * @link http://stackoverflow.com/questions/16904462/adding-additional-persist-calls-to-preupdate-call-in-symfony-2-1#comment-32419165
+         * @link http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#postflush
+         */
+        $this->removeTheseUserIds = [];
         $em->flush();
     }
 }
