@@ -53,7 +53,9 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $userId;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * The default column name `to` will cause an SQL syntax error
+     *
+     * @ORM\Column(name="to_", type="string", nullable=false)
      * @Assert\NotNull
      * @var string
      */
@@ -67,7 +69,9 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $toCanonical;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * The default column name `from` will cause an SQL syntax error
+     * 
+     * @ORM\Column(name="from_", type="string", nullable=false)
      * @Assert\NotNull
      * @var string
      */
