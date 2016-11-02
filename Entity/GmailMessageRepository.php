@@ -37,7 +37,13 @@ class  GmailMessageRepository extends EntityRepository
     ) {
         $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $domain, $userId, $labelNames, $from, $to);
 
-        $dql = 'SELECT message, labels FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
+        $dql = sprintf(
+            'SELECT message, labels
+            FROM %s message
+            LEFT JOIN message.labels labels ',
+            $this->getEntityName()
+        );
+
         $parameters = [];
         $nextParameterKey = 0;
 
@@ -126,7 +132,12 @@ class  GmailMessageRepository extends EntityRepository
         string $from = null,
         string $to = null
     ) {
-        $dql ='SELECT labels.userId, message.threadId, message.userId, max(message.sentAt) AS latestSentAt FROM TriprHqBundle:MessagingGmailMessage message LEFT JOIN message.labels labels ';
+        $dql = sprintf(
+            'SELECT labels.userId, message.threadId, message.userId, max(message.sentAt) AS latestSentAt
+            FROM %s message
+            LEFT JOIN message.labels labels ',
+            $this->getEntityName()
+        );
 
         $parameters = [];
         $nextParameterKey = 0;
