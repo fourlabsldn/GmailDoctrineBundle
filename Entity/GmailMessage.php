@@ -53,18 +53,32 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $userId;
 
     /**
-     * @ORM\Column(name="message_to", type="string", nullable=false)
+     * @ORM\Column(type="string", nullable=false)
      * @Assert\NotNull
      * @var string
      */
     protected $to;
 
     /**
-     * @ORM\Column(name="message_from", type="string", nullable=false)
+     * @ORM\Column(type="string", nullable=false)
+     * @Assert\NotNull
+     * @var string
+     */
+    protected $toCanonical;
+
+    /**
+     * @ORM\Column(type="string", nullable=false)
      * @Assert\NotNull
      * @var string
      */
     protected $from;
+
+    /**
+     * @ORM\Column(type="string", nullable=false)
+     * @Assert\NotNull
+     * @var string
+     */
+    protected $fromCanonical;
 
     /**
      * @ORM\Column(type="datetimetz", nullable=false)
