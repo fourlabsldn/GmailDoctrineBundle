@@ -6,7 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Store the userIds that should be synced
+ * Store the userIds that should be synced.
+ *
  * @ORM\MappedSuperclass
  */
 class SyncSetting
@@ -15,6 +16,7 @@ class SyncSetting
      * @ORM\Id
      * @ORM\Column(type="string", nullable=false, unique=true)
      * @Assert\NotBlank()
+     *
      * @var string
      */
     protected $domain;
@@ -22,6 +24,7 @@ class SyncSetting
     /**
      * @ORM\Column(type="array", nullable=false)
      * @Assert\NotBlank()
+     *
      * @var string[]
      */
     protected $userIds;
@@ -36,6 +39,7 @@ class SyncSetting
 
     /**
      * @param string $domain
+     *
      * @return SyncSetting
      */
     public function setDomain(string $domain): SyncSetting
@@ -55,6 +59,7 @@ class SyncSetting
 
     /**
      * @param array $userIds
+     *
      * @return SyncSetting
      */
     public function setUserIds(array $userIds): SyncSetting

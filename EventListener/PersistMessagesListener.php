@@ -10,8 +10,7 @@ use FL\GmailBundle\Event\GmailSyncMessagesEvent;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
 
 /**
- * Class PersistMessagesListener
- * @package FL\GmailDoctrineBundle\EventListener
+ * Class PersistMessagesListener.
  */
 class PersistMessagesListener
 {
@@ -32,8 +31,8 @@ class PersistMessagesListener
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param string $messageClass
-     * @param string $labelClass
+     * @param string                 $messageClass
+     * @param string                 $labelClass
      */
     public function __construct(EntityManagerInterface $entityManager, string $messageClass, string $labelClass)
     {
@@ -44,14 +43,15 @@ class PersistMessagesListener
 
     /**
      * @todo - Use less db queries, to check previous persistence
+     *
      * @param GmailSyncMessagesEvent $event
      */
     public function onGmailSyncMessages(GmailSyncMessagesEvent $event)
     {
         $persistedLabels = new GmailLabelCollection();
         foreach ($event->getLabelCollection()->getLabels() as $label) {
-            /** @var GmailLabelInterface $label */
-            $existingLabel = $this->labelRepository->findOneBy(['name'=>$label->getName(), 'userId' => $label->getUserId()]);
+            /* @var GmailLabelInterface $label */
+            $existingLabel = $this->labelRepository->findOneBy(['name' => $label->getName(), 'userId' => $label->getUserId()]);
             if ($existingLabel instanceof GmailLabelInterface) {
                 $persistedLabels->addLabel($existingLabel);
             }

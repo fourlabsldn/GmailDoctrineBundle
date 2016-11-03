@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Store the gmailIds that need to be synced.
+ *
  * @ORM\MappedSuperclass
  */
 class GmailIds extends BaseGmailIds
@@ -15,12 +16,14 @@ class GmailIds extends BaseGmailIds
     /**
      * @ORM\Id
      * @ORM\Column(type="string", nullable=false, unique=true)
+     *
      * @var string
      */
     protected $userId;
 
     /**
      * @ORM\Column(type="simple_array", nullable=true)
+     *
      * @var string[]|null
      */
     protected $gmailIds = [];
@@ -28,6 +31,7 @@ class GmailIds extends BaseGmailIds
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotBlank()
+     *
      * @var string
      */
     protected $domain = '';

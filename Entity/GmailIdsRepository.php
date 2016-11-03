@@ -5,13 +5,13 @@ namespace FL\GmailDoctrineBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class GmailIdsRepository
- * @package FL\GmailDoctrineBundle\Entity
+ * Class GmailIdsRepository.
  */
 class GmailIdsRepository extends EntityRepository
 {
     /**
      * @param array $userIds
+     *
      * @return array
      */
     public function getAllFromUserIds(array $userIds)

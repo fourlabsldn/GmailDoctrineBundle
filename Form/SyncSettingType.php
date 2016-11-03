@@ -2,15 +2,13 @@
 
 namespace FL\GmailDoctrineBundle\Form;
 
-use FL\GmailDoctrineBundle\Entity\SyncSetting;
 use FL\GmailBundle\Form\Type\InboxType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class SettingsType
- * @package FL\GmailDoctrineBundle\Form\Type
+ * Class SettingsType.
  */
 class SyncSettingType extends AbstractType
 {
@@ -29,14 +27,14 @@ class SyncSettingType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('userIds', InboxType::class, [
-            'multiple'=>true,
-            'expanded'=>true,
-            'label'=>'Users To Sync'
+            'multiple' => true,
+            'expanded' => true,
+            'label' => 'Users To Sync',
         ]);
     }
 

@@ -5,8 +5,7 @@ namespace FL\GmailDoctrineBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class SyncSettingRepository
- * @package FL\GmailDoctrineBundle\Entity
+ * Class SyncSettingRepository.
  */
 class SyncSettingRepository extends EntityRepository
 {

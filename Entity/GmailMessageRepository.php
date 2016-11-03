@@ -6,22 +6,21 @@ use Doctrine\ORM\EntityRepository;
 use FL\GmailBundle\Model\GmailMessageInterface;
 
 /**
-* Class GmailMessageRepository
-* @package FL\GmailDoctrineBundle\Entity
-*/
-class  GmailMessageRepository extends EntityRepository
+ * Class GmailMessageRepository.
+ */
+class GmailMessageRepository extends EntityRepository
 {
     /**
      * @see GmailMessageRepository::uniqueByThreadPartials()
      *
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param string|null $dateSort
-     * @param string|null $domain
-     * @param string|null $userId
+     * @param int|null      $limit
+     * @param int|null      $offset
+     * @param string|null   $dateSort
+     * @param string|null   $domain
+     * @param string|null   $userId
      * @param string[]|null $labelNames
-     * @param string|null $from
-     * @param string|null $to
+     * @param string|null   $from
+     * @param string|null   $to
      *
      * @return GmailMessageInterface[]
      */
@@ -68,19 +67,21 @@ class  GmailMessageRepository extends EntityRepository
             $dql = rtrim($dql, ' OR ');
             $dql .= ')';
             $this->uniqueByThreadSortClause($dql, 'message.sentAt', $dateSort);
+
             return $this->getEntityManager()->createQuery($dql)->setParameters($parameters)->getResult();
         }
+
         return [];
     }
 
     /**
      * @see GmailMessageRepository::uniqueByThreadPartials()
      *
-     * @param string|null $domain
-     * @param string|null $userId
+     * @param string|null   $domain
+     * @param string|null   $userId
      * @param string[]|null $labelNames
-     * @param string|null $from
-     * @param string|null $to
+     * @param string|null   $from
+     * @param string|null   $to
      *
      * @return int
      */
@@ -95,25 +96,23 @@ class  GmailMessageRepository extends EntityRepository
     }
 
     /**
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param string|null $dateSort ('ASC', 'DESC', null)
-     * @param string|null $domain (null = all results independent of domain)
-     * @param string|null $userId (null = all results independent of userId)
+     * @param int|null      $limit
+     * @param int|null      $offset
+     * @param string|null   $dateSort   ('ASC', 'DESC', null)
+     * @param string|null   $domain     (null = all results independent of domain)
+     * @param string|null   $userId     (null = all results independent of userId)
      * @param string[]|null $labelNames (null = all results independent of labelName)
-     * @param string|null $from (null = all results independent of from)
-     * @param string|null $to (null = all results independent of to)
+     * @param string|null   $from       (null = all results independent of from)
+     * @param string|null   $to         (null = all results independent of to)
      *
      * @return array
-     * Note: Each element in the return array looks like this:
-     *  [
-     *      'threadId' => 'someThreadId',
-     *      'userId' => 'someUserId',
-     *      'latestSentAt' => 'someDateString',
-     *  ]
-     *
-     *
-     * ThreadIds may or may not collide across userIds, play it safe!
+     *               Note: Each element in the return array looks like this:
+     *               [
+     *               'threadId' => 'someThreadId',
+     *               'userId' => 'someUserId',
+     *               'latestSentAt' => 'someDateString',
+     *               ]
+     *               ThreadIds may or may not collide across userIds, play it safe!
      * @link http://stackoverflow.com/questions/25198394/are-gmail-thread-ids-unique-across-users
      *
      * If there are a lot of threads, look to optimize this query
@@ -164,12 +163,12 @@ class  GmailMessageRepository extends EntityRepository
     }
 
     /**
-     * @param string $dql
-     * @param array $parameters
-     * @param int $nextParameterKey
+     * @param string      $dql
+     * @param array       $parameters
+     * @param int         $nextParameterKey
      * @param string|null $domain
      * @param string|null $userId
-     * @param array|null $labelNames
+     * @param array|null  $labelNames
      * @param string|null $from
      * @param string|null $to
      */
@@ -183,35 +182,35 @@ class  GmailMessageRepository extends EntityRepository
         string $from = null,
         string $to = null)
     {
-        /**
+        /*
          * If no where statements are created, append 'WHERE true=true' to the $dql
          * such that 'AND' statements can be appended safely  to the $dql
          */
         $dql .= ' WHERE true=true AND '; //
-        if (is_array($labelNames) && count($labelNames)  > 0) {
+        if (is_array($labelNames) && count($labelNames) > 0) {
             $dql .= sprintf(' labels.name IN (?%d)  AND ', $nextParameterKey);
             $parameters[] = $labelNames;
-            $nextParameterKey++;
+            ++$nextParameterKey;
         }
         if (is_string($userId)) {
             $dql .= sprintf(' message.userId = ?%d  AND ', $nextParameterKey);
             $parameters[] = $userId;
-            $nextParameterKey++;
+            ++$nextParameterKey;
         }
         if (is_string($from)) {
             $dql .= sprintf(' message.from LIKE ?%d  AND ', $nextParameterKey);
-            $parameters[] = '%' . $from .'%';
-            $nextParameterKey++;
+            $parameters[] = '%'.$from.'%';
+            ++$nextParameterKey;
         }
         if (is_string($to)) {
             $dql .= sprintf(' message.to LIKE ?%d  AND ', $nextParameterKey);
-            $parameters[] = '%' . $to .'%';
-            $nextParameterKey++;
+            $parameters[] = '%'.$to.'%';
+            ++$nextParameterKey;
         }
         if (is_string($domain)) {
             $dql .= sprintf(' message.domain = ?%d  AND ', $nextParameterKey);
             $parameters[] = $domain;
-            $nextParameterKey++;
+            ++$nextParameterKey;
         }
         $dql = rtrim($dql, ' AND ');
     }
@@ -243,6 +242,7 @@ class  GmailMessageRepository extends EntityRepository
 
     /**
      * @param array $userIds
+     *
      * @return array
      */
     public function getAllFromUserIds(array $userIds)
@@ -256,6 +256,7 @@ class  GmailMessageRepository extends EntityRepository
 
     /**
      * @param array $ids
+     *
      * @return array
      */
     public function getAllFromIds(array $ids)

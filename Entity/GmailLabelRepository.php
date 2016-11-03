@@ -5,14 +5,15 @@ namespace FL\GmailDoctrineBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class LabelRepository
- * @package FL\GmailDoctrineBundle\Entity
+ * Class LabelRepository.
  */
 class GmailLabelRepository extends EntityRepository
 {
     /**
      * Get a set of labels by their names.
+     *
      * @param $labelNames
+     *
      * @return array
      */
     public function getLabelsByName($labelNames)
@@ -26,6 +27,7 @@ class GmailLabelRepository extends EntityRepository
 
     /**
      * @param array $userIds
+     *
      * @return array
      */
     public function getAllFromUserIds(array $userIds)

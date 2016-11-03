@@ -5,11 +5,9 @@ namespace FL\GmailDoctrineBundle\Model;
 use FL\GmailBundle\Swift\SwiftGmailMessage;
 use Html2Text\Html2Text;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * Class OutgoingEmail
- * @package FL\GmailDoctrineBundle\Model
+ * Class OutgoingEmail.
  */
 class OutgoingEmail
 {
@@ -61,6 +59,7 @@ class OutgoingEmail
 
     /**
      * @param string $from
+     *
      * @return OutgoingEmail
      */
     public function setFrom(string $from): OutgoingEmail
@@ -80,6 +79,7 @@ class OutgoingEmail
 
     /**
      * @param array $to
+     *
      * @return $this
      */
     public function setTo(array $to)
@@ -94,11 +94,12 @@ class OutgoingEmail
      */
     public function getToCSV()
     {
-        return implode(",", $this->to);
+        return implode(',', $this->to);
     }
 
     /**
      * @param string $toCSV
+     *
      * @return OutgoingEmail
      */
     public function setToCSV(string $toCSV): OutgoingEmail
@@ -118,6 +119,7 @@ class OutgoingEmail
 
     /**
      * @param string $subject
+     *
      * @return OutgoingEmail
      */
     public function setSubject(string $subject): OutgoingEmail
@@ -137,6 +139,7 @@ class OutgoingEmail
 
     /**
      * @param string $bodyHtml
+     *
      * @return OutgoingEmail
      */
     public function setBodyHtml(string $bodyHtml): OutgoingEmail
@@ -166,6 +169,7 @@ class OutgoingEmail
 
     /**
      * @param string|null $threadId
+     *
      * @return OutgoingEmail
      */
     public function setThreadId($threadId): OutgoingEmail

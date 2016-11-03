@@ -3,7 +3,6 @@
 namespace FL\GmailDoctrineBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\MappedSuperclass
@@ -14,18 +13,21 @@ class Credentials
      * @ORM\Id
      * @ORM\Column(type="integer", nullable=false)
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
      * @var int|null
      */
     protected $id;
 
     /**
      * @ORM\Column(type="array", nullable=true)
+     *
      * @var array|null
      */
     protected $tokenArray;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     *
      * @var string|null
      */
     protected $authCode;
@@ -48,6 +50,7 @@ class Credentials
 
     /**
      * @param array|null $tokenArray
+     *
      * @return Credentials
      */
     public function setTokenArray(array $tokenArray)
@@ -67,6 +70,7 @@ class Credentials
 
     /**
      * @param string|null $authCode
+     *
      * @return Credentials
      */
     public function setAuthCode(string $authCode = null)

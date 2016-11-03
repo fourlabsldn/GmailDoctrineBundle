@@ -15,7 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Class FromType
  * This class needs a list of userIds, and it uses OAuth and Directory to
  * construct a ChoiceType with email addresses.
- * @package FL\GmailDoctrineBundle
  */
 class FromType extends AbstractType
 {
@@ -26,18 +25,19 @@ class FromType extends AbstractType
 
     /**
      * InboxType constructor.
-     * @param OAuth $oAuth
-     * @param Directory $directory
+     *
+     * @param OAuth                  $oAuth
+     * @param Directory              $directory
      * @param EntityManagerInterface $entityManager
-     * @param string $syncSettingClass
+     * @param string                 $syncSettingClass
      */
     public function __construct(OAuth $oAuth, Directory $directory, EntityManagerInterface $entityManager, string $syncSettingClass)
     {
         $domain = $oAuth->resolveDomain();
-        $syncSetting = $entityManager->getRepository($syncSettingClass)->findOneBy(['domain'=>$domain]);
+        $syncSetting = $entityManager->getRepository($syncSettingClass)->findOneBy(['domain' => $domain]);
 
         if (!($syncSetting instanceof SyncSetting)) {
-            throw new MissingSyncSettingException("No " . SyncSetting::class . " persisted yet.");
+            throw new MissingSyncSettingException('No '.SyncSetting::class.' persisted yet.');
         }
 
         $emailChoices = [];

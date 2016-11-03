@@ -5,13 +5,12 @@ namespace FL\GmailDoctrineBundle\EventListener;
 use FL\GmailDoctrineBundle\Services\SyncWrapper;
 
 /**
- * Class SyncMessagesSentListener
- * @package FL\GmailDoctrineBundle\EventListener
+ * Class SyncMessagesSentListener.
+ *
  * @link http://stackoverflow.com/questions/18033210/logging-swiftmailer-send-activity-in-symfony2
  */
 class SyncMessagesSentListener implements \Swift_Events_SendListener
 {
-
     /**
      * @var SyncWrapper
      */
@@ -19,6 +18,7 @@ class SyncMessagesSentListener implements \Swift_Events_SendListener
 
     /**
      * GmailMessageSentListener constructor.
+     *
      * @param SyncWrapper $syncWrapper
      */
     public function __construct(SyncWrapper $syncWrapper)
@@ -27,14 +27,14 @@ class SyncMessagesSentListener implements \Swift_Events_SendListener
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function beforeSendPerformed(\Swift_Events_SendEvent $evt)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * A sync must be triggered, because the Gmail API does not return a response with
      * enough parameters to construct a new GmailMessage entity.
      */

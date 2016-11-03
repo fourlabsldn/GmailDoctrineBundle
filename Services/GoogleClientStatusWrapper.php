@@ -8,10 +8,8 @@ use FL\GmailBundle\Services\GoogleClientStatus;
 use FL\GmailDoctrineBundle\Entity\SyncSetting;
 
 /**
- * Class GoogleClientStatusWrapper
- * @package FL\GmailDoctrineBundle\Services
+ * Class GoogleClientStatusWrapper.
  *
- * This class provides a wrapper to interact with
  * @see \FL\GmailBundle\Services\GoogleClientStatus
  */
 class GoogleClientStatusWrapper
@@ -28,8 +26,8 @@ class GoogleClientStatusWrapper
 
     /**
      * @param GoogleClientStatus $clientStatus
-     * @param EntityManager $entityManager
-     * @param string $syncSettingClass
+     * @param EntityManager      $entityManager
+     * @param string             $syncSettingClass
      */
     public function __construct(
         GoogleClientStatus $clientStatus,
@@ -50,6 +48,7 @@ class GoogleClientStatusWrapper
 
     /**
      * @param string $domain
+     *
      * @return bool
      */
     public function isSetupForDomain(string $domain)
@@ -62,6 +61,7 @@ class GoogleClientStatusWrapper
         ) {
             return true;
         }
+
         return false;
     }
 
@@ -78,8 +78,7 @@ class GoogleClientStatusWrapper
         ) {
             return true;
         }
+
         return false;
-
     }
-
 }
