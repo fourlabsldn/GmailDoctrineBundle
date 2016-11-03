@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Stores the relevant fields of Gmail Message, including its labels.
+ *
  * @ORM\MappedSuperclass
  */
 class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
@@ -25,12 +26,14 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * @ORM\Column(type="string", nullable=false, unique=true)
+     *
      * @var string
      */
     protected $gmailId;
 
     /**
      * @ORM\Column(type="string", nullable=false)
+     *
      * @var string
      */
     protected $threadId;
@@ -40,8 +43,9 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
      * Nevertheless, since each message has a unique historyId for its corresponding userId,
      * this historyId can be useful in the event that the latest historyId is not available elsewhere.
      * In this case, the latest historyId is simply the historyId with the largest value.
-     * 
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @var string
      */
     protected $historyId;
@@ -49,15 +53,17 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotNull
+     *
      * @var string
      */
     protected $userId;
 
     /**
-     * The default column name `to` will cause an SQL syntax error
+     * The default column name `to` will cause an SQL syntax error.
      *
      * @ORM\Column(name="to_", type="string", nullable=false)
      * @Assert\NotNull
+     *
      * @var string
      */
     protected $to;
@@ -65,15 +71,17 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotNull
+     *
      * @var string
      */
     protected $toCanonical;
 
     /**
-     * The default column name `from` will cause an SQL syntax error
-     * 
+     * The default column name `from` will cause an SQL syntax error.
+     *
      * @ORM\Column(name="from_", type="string", nullable=false)
      * @Assert\NotNull
+     *
      * @var string
      */
     protected $from;
@@ -81,6 +89,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotNull
+     *
      * @var string
      */
     protected $fromCanonical;
@@ -88,12 +97,14 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * @ORM\Column(type="datetimetz", nullable=false)
      * @Assert\NotNull
+     *
      * @var \DateTimeInterface
      */
     protected $sentAt;
 
     /**
      * @ORM\Column(type="string", nullable=true)
+     *
      * @var string
      */
     protected $subject;
@@ -106,18 +117,21 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     *
      * @var string
      */
     protected $snippet;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     *
      * @var string
      */
     protected $bodyPlainText;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     *
      * @var string
      */
     protected $bodyHtml;
@@ -125,6 +139,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotBlank()
+     *
      * @var string
      */
     protected $domain = '';
@@ -139,7 +154,9 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * Set Gmail Message ID.
+     *
      * @param int $id
+     *
      * @return $this
      */
     public function setId(int $id)
@@ -151,6 +168,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * Get Gmail Message ID.
+     *
      * @return string
      */
     public function getId()
@@ -159,7 +177,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addLabel(GmailLabelInterface $label): GmailMessageInterface
     {
@@ -169,7 +187,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLabels()
     {
@@ -177,7 +195,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function removeLabel(GmailLabelInterface $label): GmailMessageInterface
     {
@@ -187,7 +205,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function clearLabels(): GmailMessageInterface
     {
@@ -197,7 +215,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLabelByName(string $name)
     {
@@ -211,18 +229,20 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
             ($labels->first() instanceof GmailLabelInterface)
         ) {
             return $labels->first();
-        };
-        return null;
+        }
+
+        return;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasLabel(string $name): bool
     {
         if ($this->getLabelByName($name) instanceof GmailLabelInterface) {
             return true;
         }
+
         return false;
     }
 }

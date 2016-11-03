@@ -12,23 +12,22 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class OutgoingEmailType
- * @package FL\GmailDoctrineBundle\Form
+ * Class OutgoingEmailType.
  */
 class OutgoingEmailType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('from', FromType::class, ['required'=>true])
-            ->add('to', TextType::class, ['required'=>true])
-            ->add('subject', TextType::class, ['required'=>true])
-            ->add('threadId', TextType::class, ['required'=>false])
-            ->add('bodyHtml', TextareaType::class, ['required'=>false])
+            ->add('from', FromType::class, ['required' => true])
+            ->add('to', TextType::class, ['required' => true])
+            ->add('subject', TextType::class, ['required' => true])
+            ->add('threadId', TextType::class, ['required' => false])
+            ->add('bodyHtml', TextareaType::class, ['required' => false])
         ;
         $builder->get('to')
             ->addModelTransformer(new CallbackTransformer(
@@ -36,6 +35,7 @@ class OutgoingEmailType extends AbstractType
                     if (!$arrayValue) {
                         return '';
                     }
+
                     return implode(', ', $arrayValue);
                 },
                 function ($stringValue) {

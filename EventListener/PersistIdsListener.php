@@ -3,16 +3,12 @@
 namespace FL\GmailDoctrineBundle\EventListener;
 
 use FL\GmailBundle\Model\GmailIdsInterface;
-use FL\GmailDoctrineBundle\Entity\GmailMessage;
-use FL\GmailDoctrineBundle\Entity\GmailLabel;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FL\GmailBundle\Event\GmailSyncIdsEvent;
-use FL\GmailBundle\Model\Collection\GmailLabelCollection;
 
 /**
- * Class PersistIdsListener
- * @package FL\GmailDoctrineBundle\EventListener
+ * Class PersistIdsListener.
  */
 class PersistIdsListener
 {
@@ -28,7 +24,7 @@ class PersistIdsListener
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param string $gmailIdsClass
+     * @param string                 $gmailIdsClass
      */
     public function __construct(EntityManagerInterface $entityManager, string $gmailIdsClass)
     {
@@ -49,7 +45,6 @@ class PersistIdsListener
                 array_merge($event->getGmailIdsObject()->getGmailIds(), $persistedGmailIds->getGmailIds())
             );
             $this->entityManager->persist($persistedGmailIds);
-
         } else {
             $this->entityManager->persist($event->getGmailIdsObject());
         }

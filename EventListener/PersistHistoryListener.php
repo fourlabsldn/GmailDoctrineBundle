@@ -8,8 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class PersistHistoryListener
- * @package FL\GmailDoctrineBundle\EventListener
+ * Class PersistHistoryListener.
  */
 class PersistHistoryListener
 {
@@ -25,8 +24,9 @@ class PersistHistoryListener
 
     /**
      * GmailHistoryUpdatedListener constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param string $historyClass
+     * @param string                 $historyClass
      */
     public function __construct(EntityManagerInterface $entityManager, string $historyClass)
     {
@@ -37,6 +37,7 @@ class PersistHistoryListener
     /**
      * Persist the history ID for the user anytime it's updated.
      * Updates the row if it exists, creates it otherwise.
+     *
      * @param GmailSyncHistoryEvent $event
      */
     public function onGmailSyncHistory(GmailSyncHistoryEvent $event)
@@ -44,7 +45,7 @@ class PersistHistoryListener
         $newHistory = $event->getHistory();
         $entityManager = $this->entityManager;
 
-        $oldHistory = $this->historyRepository->findOneBy(['userId'=> $newHistory->getUserId()]);
+        $oldHistory = $this->historyRepository->findOneBy(['userId' => $newHistory->getUserId()]);
 
         if (
             (!is_int($newHistory->getHistoryId())) ||

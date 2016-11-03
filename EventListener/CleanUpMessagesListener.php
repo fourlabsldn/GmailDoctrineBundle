@@ -12,11 +12,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 /**
- * Class CleanUpMessagesListener
- * @package FL\GmailDoctrineBundle\EventListener
- *
- * When email accounts are removed from the list of emails to be synced in SyncSettings,
- * remove all associated messages, labels, histories and gmailIds
+ * Class CleanUpMessagesListener.
  */
 class CleanUpMessagesListener
 {
@@ -43,7 +39,8 @@ class CleanUpMessagesListener
     /**
      * @var array
      *
-     * We will be removing entities for these userIds, but doctrine doesn't encourage doing this in the same flush.
+     * We will be removing entities for these userIds, but doctrine doesn't encourage doing this in the same flush
+     *
      * @link http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preupdate
      * "PREUPDATE: Changes to associations of the updated entity are never allowed in this event, since Doctrine cannot guarantee to correctly handle
      * referential integrity at this point of the flush operation. This event has a powerful feature however, it is executed with a PreUpdateEventArgs
@@ -51,13 +48,14 @@ class CleanUpMessagesListener
      *
      * A good way around this is to do another flush later.
      * The trade-off is that we lose the atomicity of doing things in one flush.
-     * I.e. if there is a power cut between the two flushes... the second flush won't execute.
+     * I.e. if there is a power cut between the two flushes... the second flush won't execute
      * @link http://stackoverflow.com/questions/16904462/adding-additional-persist-calls-to-preupdate-call-in-symfony-2-1#answer-16906067
      */
     private $removeTheseUserIds = [];
 
     /**
      * SyncSettingListener constructor.
+     *
      * @param string $messageClass
      * @param string $labelClass
      * @param string $historyClass
@@ -70,7 +68,6 @@ class CleanUpMessagesListener
         $this->historyClass = $historyClass;
         $this->gmailIdsClass = $gmailIdsClass;
     }
-
 
     /**
      * @param PreUpdateEventArgs $args
@@ -140,7 +137,7 @@ class CleanUpMessagesListener
             $em->remove($ids);
         }
 
-        /**
+        /*
          * Doctrine doesn't like flush called in postFlush
          * For instance, it chokes if we don't empty array properties
          * @link http://stackoverflow.com/questions/16904462/adding-additional-persist-calls-to-preupdate-call-in-symfony-2-1#comment-32419165

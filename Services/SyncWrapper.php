@@ -13,10 +13,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class SyncWrapper
- * @package FL\GmailDoctrineBundle\Services
+ * Class SyncWrapper.
  *
- * This class provides a wrapper to interact with
  * @see \FL\GmailBundle\Services\SyncGmailIds
  * @see \FL\GmailBundle\Services\SyncMessages
  */
@@ -63,14 +61,14 @@ class SyncWrapper
     private $gmailIdsRepository;
 
     /**
-     * @param SyncGmailIds $syncGmailIds
-     * @param SyncMessages $syncMessages
-     * @param OAuth $oAuth
-     * @param Directory $directory
+     * @param SyncGmailIds           $syncGmailIds
+     * @param SyncMessages           $syncMessages
+     * @param OAuth                  $oAuth
+     * @param Directory              $directory
      * @param EntityManagerInterface $entityManager
-     * @param string $historyClass
-     * @param string $syncSettingClass
-     * @param string $gmailIdsClass
+     * @param string                 $historyClass
+     * @param string                 $syncSettingClass
+     * @param string                 $gmailIdsClass
      */
     public function __construct(
         SyncGmailIds $syncGmailIds,
@@ -120,7 +118,7 @@ class SyncWrapper
 
     /**
      * @param string $userId
-     * @param int $syncLimit
+     * @param int    $syncLimit
      */
     public function syncByUserId(string $userId, int $syncLimit)
     {
@@ -143,7 +141,7 @@ class SyncWrapper
 
     /**
      * @param string $userId
-     * @param int $syncLimit
+     * @param int    $syncLimit
      */
     private function syncMessagesByUserId(string $userId, int $syncLimit)
     {
@@ -152,7 +150,7 @@ class SyncWrapper
             $allIdsToSync = $persistedGmailIds->getGmailIds();
             $idsToSyncRightNow = $persistedGmailIds->getGmailIds($syncLimit);
 
-            /**
+            /*
              * Note: we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
              * such that we are syncing the latest messages first.
              * This is important, such that when we call syncs after sending emails, or making updates

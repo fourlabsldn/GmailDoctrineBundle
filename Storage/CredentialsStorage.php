@@ -8,8 +8,7 @@ use FL\GmailBundle\Storage\CredentialsStorageInterface;
 use FL\GmailDoctrineBundle\Entity\Credentials;
 
 /**
- * Class CredentialsStorage
- * @package FL\GmailDoctrineBundle\Storage
+ * Class CredentialsStorage.
  */
 class CredentialsStorage implements CredentialsStorageInterface
 {
@@ -22,7 +21,7 @@ class CredentialsStorage implements CredentialsStorageInterface
      * @var string
      */
     private $credentialsClass;
-    
+
     /**
      * @var EntityRepository
      */
@@ -30,8 +29,9 @@ class CredentialsStorage implements CredentialsStorageInterface
 
     /**
      * CredentialsStorage constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param string $credentialsClass
+     * @param string                 $credentialsClass
      */
     public function __construct(EntityManagerInterface $entityManager, string $credentialsClass)
     {
@@ -41,13 +41,13 @@ class CredentialsStorage implements CredentialsStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function persistTokenArray(array $tokenArray)
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            $credentials = new $this->credentialsClass;
+            $credentials = new $this->credentialsClass();
         }
 
         $credentials->setTokenArray($tokenArray);
@@ -56,26 +56,26 @@ class CredentialsStorage implements CredentialsStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTokenArray()
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            return null;
+            return;
         }
 
         return $credentials->getTokenArray();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function persistAuthCode(string $authCode)
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            $credentials = new $this->credentialsClass;
+            $credentials = new $this->credentialsClass();
         }
 
         $credentials->setAuthCode($authCode);
@@ -84,26 +84,26 @@ class CredentialsStorage implements CredentialsStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getAuthCode()
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            return null;
+            return;
         }
 
         return $credentials->getAuthCode();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function deleteAuthCode()
     {
         $credentials = $this->credentialsRepository->findOneBy([]);
         if (!($credentials instanceof Credentials)) {
-            $credentials = new $this->credentialsClass;
+            $credentials = new $this->credentialsClass();
         }
 
         $credentials->setAuthCode(null);

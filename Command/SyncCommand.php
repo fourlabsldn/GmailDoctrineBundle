@@ -8,8 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class SyncCommand
- * @package FL\GmailDoctrineBundle\Command
+ * Class SyncCommand.
  */
 class SyncCommand extends Command
 {
@@ -22,6 +21,7 @@ class SyncCommand extends Command
 
     /**
      * SyncCommand constructor.
+     *
      * @param SyncWrapper $syncWrapper
      */
     public function __construct(SyncWrapper $syncWrapper)
@@ -30,9 +30,7 @@ class SyncCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * @return void
-     */
+
     protected function configure()
     {
         $this
@@ -43,10 +41,10 @@ class SyncCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @throws \Exception
-     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -56,6 +54,7 @@ class SyncCommand extends Command
         } catch (\Google_Service_Exception $e) {
             if ($e->getErrors()[0]['reason'] === 'authError') {
                 $output->writeln('Auth error. Did you make sure there\'s an authenticated Google Apps account for this application?');
+
                 return;
             } else {
                 throw $e;

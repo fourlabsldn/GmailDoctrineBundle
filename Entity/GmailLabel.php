@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Stores labels applied to Gmail Messages.
+ *
  * @ORM\MappedSuperclass
  * @UniqueEntity(
  *     fields = {"name", "userId"},
@@ -28,6 +29,7 @@ class GmailLabel extends BaseLabel
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotNull
+     *
      * @var string
      */
     protected $name;
@@ -35,12 +37,14 @@ class GmailLabel extends BaseLabel
     /**
      * @ORM\Column(type="string", nullable=false)
      * @Assert\NotNull
+     *
      * @var string
      */
     protected $userId;
 
     /**
-     * Get label ID
+     * Get label ID.
+     *
      * @return int|null
      */
     public function getId()
