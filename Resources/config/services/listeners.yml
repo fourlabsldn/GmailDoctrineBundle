@@ -42,3 +42,4 @@ services:
             - "@fl_gmail_doctrine.sync_wrapper"
         tags:
             - { name: 'swiftmailer.fl_gmail_api_mailer.plugin'}
+

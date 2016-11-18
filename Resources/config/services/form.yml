@@ -14,3 +14,4 @@ services:
             - "@fl_gmail.directory"
             - "@doctrine.orm.entity_manager"
             - "%fl_gmail_doctrine.sync_setting_class%"
+
