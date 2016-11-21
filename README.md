@@ -3,6 +3,7 @@
 GmailDoctrineBundle provides you a Doctrine implementation of [GmailBundle](https://github.com/fourlabsldn/GmailBundle). 
 
 [![StyleCI](https://styleci.io/repos/70260536/shield?branch=master)](https://styleci.io/repos/70260536)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/3ed528cf-1d9b-4241-b91a-90eba601f5d4/mini.png)](https://insight.sensiolabs.com/projects/3ed528cf-1d9b-4241-b91a-90eba601f5d4)
 
 ## Installation
 
