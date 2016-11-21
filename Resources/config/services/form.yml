@@ -1,6 +1,6 @@
 services:
     fl_gmail_doctrine.form.settings:
-        class: FL\GmailDoctrineBundle\Form\SyncSettingType
+        class: FL\GmailDoctrineBundle\Form\Type\SyncSettingType
         tags:
             - { name: form.type }
         arguments:

@@ -57,10 +57,10 @@ class GmailSyncSetting extends SyncSetting
 - Event Listeners, that will save what we fetch from Google into the database. See more at the `EventListener` folder.
 - `FL\GmailDoctrineBundle\Entity\SyncSetting` entity:
     - Allows you to pick which email inboxes you want to sync, and send email from.
-    - See corresponding form, `FL\GmailDoctrineBundle\Form\SyncSettingType`.
+    - See corresponding form, `FL\GmailDoctrineBundle\Form\Type\SyncSettingType`.
 - `FL\GmailDoctrineBundle\Model\OutgoingEmail` model class:
     - Represents an Outgoing Email. 
-    - See corresponding form, `FL\GmailDoctrineBundle\Form\OutgoingEmailType`.
+    - See corresponding form, `FL\GmailDoctrineBundle\Form\Type\OutgoingEmailType`.
     - From field, according to what you have enabled through `FL\GmailDoctrineBundle\Entity\SyncSetting`.
 - `FL\GmailDoctrineBundle\Services\GoogleClientStatusWrapper` is a wrapper for `FL\GmailBundle\Services\GoogleClientStatus`.
     - Copies the token authentication method, `GoogleClientStatusWrapper::isAuthenticated`.

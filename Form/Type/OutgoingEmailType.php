@@ -1,8 +1,7 @@
 <?php
 
-namespace FL\GmailDoctrineBundle\Form;
+namespace FL\GmailDoctrineBundle\Form\Type;
 
-use FL\GmailDoctrineBundle\Form\Type\FromType;
 use FL\GmailDoctrineBundle\Model\OutgoingEmail;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;

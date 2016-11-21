@@ -1,6 +1,6 @@
 <?php
 
-namespace FL\GmailDoctrineBundle\Form;
+namespace FL\GmailDoctrineBundle\Form\Type;
 
 use FL\GmailBundle\Form\Type\InboxType;
 use Symfony\Component\Form\AbstractType;
