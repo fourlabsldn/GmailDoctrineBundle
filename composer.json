@@ -1,6 +1,5 @@
 {
   "name": "fourlabs/gmail-doctrine-bundle",
-  "version": "1.0",
   "description": "Doctrine Implementation of fourlabs/gmail-bundle",
   "license": "MIT",
   "homepage": "https://github.com/fourlabsldn/GmailBundle",

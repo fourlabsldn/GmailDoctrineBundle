@@ -113,6 +113,7 @@ class GmailMessageRepository extends EntityRepository
      *               'latestSentAt' => 'someDateString',
      *               ]
      *               ThreadIds may or may not collide across userIds, play it safe!
+     *
      * @link http://stackoverflow.com/questions/25198394/are-gmail-thread-ids-unique-across-users
      *
      * If there are a lot of threads, look to optimize this query
