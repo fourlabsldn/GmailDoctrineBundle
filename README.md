@@ -61,6 +61,9 @@ class GmailSyncSetting extends SyncSetting
     - Represents an Outgoing Email. 
     - See corresponding form, `FL\GmailDoctrineBundle\Form\OutgoingEmailType`.
     - From field, according to what you have enabled through `FL\GmailDoctrineBundle\Entity\SyncSetting`.
+- `FL\GmailDoctrineBundle\Services\GoogleClientStatusWrapper` is a wrapper for `FL\GmailBundle\Services\GoogleClientStatus`.
+    - Copies the token authentication method, `GoogleClientStatusWrapper::isAuthenticated`.
+    - And two more methods `GoogleClientStatusWrapper::isSetupForDomain(string $domain)` and `GoogleClientStatusWrapper::isSetupForAtLeastOneDomain()`
 
 ### Limitations
 - At the moment, this implementation assumes you are only managing one Google Apps Domain per Symfony application. 
