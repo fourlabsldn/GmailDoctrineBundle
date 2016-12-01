@@ -70,11 +70,10 @@ class PersistMessagesListener
      */
     public function onGmailSyncMessages(GmailSyncMessagesEvent $event)
     {
-        $syncSetting = $this->syncSettingRepository->findOneBy(['domain'=>$this->domain]);
-        if (! ($syncSetting instanceof SyncSetting)) {
+        $syncSetting = $this->syncSettingRepository->findOneBy(['domain' => $this->domain]);
+        if (!($syncSetting instanceof SyncSetting)) {
             throw new MissingSyncSettingException();
         }
-
 
         $persistedLabels = new GmailLabelCollection();
         foreach ($event->getLabelCollection()->getLabels() as $label) {
