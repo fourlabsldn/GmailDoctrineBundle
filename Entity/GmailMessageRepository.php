@@ -48,7 +48,7 @@ class GmailMessageRepository extends EntityRepository
 
         // passing labelNames as null here ensures each message is hydrated with all its labels
         // the label filtering was already done in partials
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $domain, $userId, null, null, $from, $to);
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $domain, $userId, null, $from, $to);
 
         if (count($partials) > 0) {
             $dql .= ' AND ( ';
@@ -122,7 +122,7 @@ class GmailMessageRepository extends EntityRepository
      *
      * With indexes, the time complexity for partials is P(log[N]) = numberOfPartials(log[numberOfMessagesInTable])
      */
-    private function uniqueByThreadPartials(
+    protected function uniqueByThreadPartials(
         int $limit = null,
         int $offset = null,
         string $dateSort = null,
@@ -173,7 +173,7 @@ class GmailMessageRepository extends EntityRepository
      * @param string|null $from
      * @param string|null $to
      */
-    private function uniqueByThreadWhereClause(
+    protected function uniqueByThreadWhereClause(
         string &$dql,
         array &$parameters,
         int &$nextParameterKey,
@@ -221,7 +221,7 @@ class GmailMessageRepository extends EntityRepository
      * @param string $fieldName
      * @param string $dateSort
      */
-    private function uniqueByThreadSortClause(
+    protected function uniqueByThreadSortClause(
         string &$dql,
         string $fieldName,
         string $dateSort = null
