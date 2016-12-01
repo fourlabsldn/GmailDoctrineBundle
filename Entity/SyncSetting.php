@@ -38,6 +38,8 @@ class SyncSetting
      * if the message's userId is in $userIdsCurrentlyFlagged,
      * the message should be marked as flagged.
      *
+     * @see GmailMessage::$flagged
+     *
      * @ORM\Column(type="array", nullable=true)
      *
      * @var string[]

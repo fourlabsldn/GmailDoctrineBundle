@@ -145,6 +145,8 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $domain = '';
 
     /**
+     *  @see SyncSetting::$userIdsCurrentlyFlagged
+     *
      * @var bool
      * @ORM\Column(type="boolean", nullable=false)
      */
