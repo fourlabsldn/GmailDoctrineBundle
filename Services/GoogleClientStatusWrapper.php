@@ -59,6 +59,46 @@ class GoogleClientStatusWrapper
             ($this->clientStatus->isAuthenticated() === true) &&
             ($syncSetting instanceof SyncSetting) &&
             (is_array($syncSetting->getUserIds())) &&
+            (count($syncSetting->getUserIds()))
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSetupForAtLeastOneDomain()
+    {
+        $syncSetting = $this->syncSettingRepository->findOneBy([]);
+
+        if (
+            ($this->clientStatus->isAuthenticated() === true) &&
+            ($syncSetting instanceof SyncSetting) &&
+            (is_array($syncSetting->getUserIds())) &&
+            (count($syncSetting->getUserIds()))
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public function isSendingSetupForDomain(string $domain)
+    {
+        $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
+
+        if (
+            ($this->clientStatus->isAuthenticated() === true) &&
+            ($syncSetting instanceof SyncSetting) &&
+            (is_array($syncSetting->getUserIds())) &&
             (count($syncSetting->getUserIds())) &&
             (is_array($syncSetting->getUserIdsAvailableAsFromAddress())) &&
             (count($syncSetting->getUserIdsAvailableAsFromAddress()))
@@ -72,7 +112,7 @@ class GoogleClientStatusWrapper
     /**
      * @return bool
      */
-    public function isSetupForAtLeastOneDomain()
+    public function isSendingSetupForAtLeastOneDomain()
     {
         $syncSetting = $this->syncSettingRepository->findOneBy([]);
 
