@@ -57,7 +57,13 @@ class GoogleClientStatusWrapper
 
         if (
             ($this->clientStatus->isAuthenticated() === true) &&
-            ($syncSetting instanceof SyncSetting)
+            ($syncSetting instanceof SyncSetting) &&
+            (is_array($syncSetting->getUserIds())) &&
+            (count($syncSetting->getUserIds())) &&
+            (is_array($syncSetting->getUserIdsAvailableAsFromAddress())) &&
+            (count($syncSetting->getUserIdsAvailableAsFromAddress())) &&
+            (is_array($syncSetting->getUserIdsDisplayedOnInbox())) &&
+            (count($syncSetting->getUserIdsDisplayedOnInbox()))
         ) {
             return true;
         }
@@ -74,7 +80,13 @@ class GoogleClientStatusWrapper
 
         if (
             ($this->clientStatus->isAuthenticated() === true) &&
-            ($syncSetting instanceof SyncSetting)
+            ($syncSetting instanceof SyncSetting) &&
+            (is_array($syncSetting->getUserIds())) &&
+            (count($syncSetting->getUserIds())) &&
+            (is_array($syncSetting->getUserIdsAvailableAsFromAddress())) &&
+            (count($syncSetting->getUserIdsAvailableAsFromAddress())) &&
+            (is_array($syncSetting->getUserIdsDisplayedOnInbox())) &&
+            (count($syncSetting->getUserIdsDisplayedOnInbox()))
         ) {
             return true;
         }
