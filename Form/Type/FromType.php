@@ -24,15 +24,17 @@ class FromType extends AbstractType
     protected $emailChoices;
 
     /**
-     * InboxType constructor.
-     *
      * @param OAuth                  $oAuth
      * @param Directory              $directory
      * @param EntityManagerInterface $entityManager
      * @param string                 $syncSettingClass
      */
-    public function __construct(OAuth $oAuth, Directory $directory, EntityManagerInterface $entityManager, string $syncSettingClass)
-    {
+    public function __construct(
+        OAuth $oAuth,
+        Directory $directory,
+        EntityManagerInterface $entityManager,
+        string $syncSettingClass
+    ) {
         $domain = $oAuth->resolveDomain();
         $syncSetting = $entityManager->getRepository($syncSettingClass)->findOneBy(['domain' => $domain]);
 
@@ -41,7 +43,13 @@ class FromType extends AbstractType
         }
 
         $emailChoices = [];
-        foreach ($syncSetting->getUserIds() as $userId) {
+        if ($syncSetting->getUserIdsAvailableAsFromAddress() === null) {
+            $this->emailChoices = [];
+
+            return;
+        }
+
+        foreach ($syncSetting->getUserIdsAvailableAsFromAddress() as $userId) {
             $emailsOfUserId = $directory->resolveEmailsFromUserId($userId, Directory::MODE_RESOLVE_PRIMARY_ONLY);
             if (array_key_exists(0, $emailsOfUserId)) {
                 $email = $emailsOfUserId[0];

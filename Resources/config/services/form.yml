@@ -5,6 +5,7 @@ services:
             - { name: form.type }
         arguments:
             - "%fl_gmail_doctrine.sync_setting_class%"
+            - "@fl_gmail.directory"
     fl_gmail_doctrine.type.from:
         class: FL\GmailDoctrineBundle\Form\Type\FromType
         tags:

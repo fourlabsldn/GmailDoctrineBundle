@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Store the userIds that should be synced.
  *
  * @ORM\MappedSuperclass
+ * @ORM\HasLifecycleCallbacks()
  */
 class SyncSetting
 {
@@ -28,6 +29,20 @@ class SyncSetting
      * @var string[]
      */
     protected $userIds;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     *
+     * @var string[]
+     */
+    protected $userIdsDisplayedOnInbox;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     *
+     * @var string[]
+     */
+    protected $userIdsAvailableAsFromAddress;
 
     /**
      * @return string|null
@@ -67,5 +82,59 @@ class SyncSetting
         $this->userIds = $userIds;
 
         return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getUserIdsDisplayedOnInbox()
+    {
+        return $this->userIdsDisplayedOnInbox;
+    }
+
+    /**
+     * @param array|null $userIds
+     *
+     * @return SyncSetting
+     */
+    public function setUserIdsDisplayedOnInbox(array $userIds = null): SyncSetting
+    {
+        $this->userIdsDisplayedOnInbox = $userIds;
+
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getUserIdsAvailableAsFromAddress()
+    {
+        return $this->userIdsAvailableAsFromAddress;
+    }
+
+    /**
+     * @param array|null $userIds
+     *
+     * @return SyncSetting
+     */
+    public function setUserIdsAvailableAsFromAddress(array $userIds = null): SyncSetting
+    {
+        $this->userIdsAvailableAsFromAddress = $userIds;
+
+        return $this;
+    }
+
+    /**
+     * Every id in @see SyncSetting::$userIdsDisplayedOnInbox
+     * must be in @see SyncSetting::$userIds
+     * Every id in @see SyncSetting::$userIdsAvailableAsFromAddress
+     * must be in @see SyncSetting::$userIds
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function correctUserIds()
+    {
+        $this->userIdsDisplayedOnInbox = array_intersect($this->userIdsDisplayedOnInbox, $this->userIds);
+        $this->userIdsAvailableAsFromAddress = array_intersect($this->userIdsAvailableAsFromAddress, $this->userIds);
     }
 }
