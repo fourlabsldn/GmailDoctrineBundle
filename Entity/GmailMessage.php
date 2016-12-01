@@ -145,6 +145,12 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $domain = '';
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    protected $flagged = false;
+
+    /**
      * GmailMessage constructor.
      */
     public function __construct()
@@ -244,5 +250,21 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isFlagged(): bool
+    {
+        return $this->flagged;
+    }
+
+    /**
+     * @param boolean $flagged
+     */
+    public function setFlagged(bool $flagged)
+    {
+        $this->flagged = $flagged;
     }
 }
