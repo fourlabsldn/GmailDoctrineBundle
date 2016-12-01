@@ -15,7 +15,7 @@ class SyncSettingType extends AbstractType
     /**
      * @var string
      */
-    private $syncSettingClass;
+    protected $syncSettingClass;
 
     /**
      * @param string $syncSettingClass
