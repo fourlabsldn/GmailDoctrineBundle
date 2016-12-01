@@ -21,7 +21,7 @@ class FromType extends AbstractType
     /**
      * @var string[]
      */
-    private $emailChoices;
+    protected $emailChoices;
 
     /**
      * InboxType constructor.
