@@ -24,7 +24,7 @@ class SyncSetting
     protected $domain;
 
     /**
-     * User Ids being synced
+     * User Ids being synced.
      *
      * @ORM\Column(type="array", nullable=false)
      * @Assert\NotBlank()
@@ -138,7 +138,8 @@ class SyncSetting
      * Every id in @see SyncSetting::$userIdsCurrentlyFlagged
      * must be in @see SyncSetting::$userIds
      * Every id in @see SyncSetting::$userIdsAvailableAsFromAddress
-     * must be in @see SyncSetting::$userIds
+     * must be in @see SyncSetting::$userIds.
+     *
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */

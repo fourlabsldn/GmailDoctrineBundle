@@ -24,7 +24,7 @@ class SyncSettingType extends AbstractType
     private $directory;
 
     /**
-     * @param string $syncSettingClass
+     * @param string    $syncSettingClass
      * @param Directory $directory
      */
     public function __construct(
@@ -58,13 +58,13 @@ class SyncSettingType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'Display On Inbox',
-                'choices' => $choices
+                'choices' => $choices,
             ]);
             $event->getForm()->add('userIdsAvailableAsFromAddress', ChoiceType::class, [
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'Display as From Addresses',
-                'choices' => $choices
+                'choices' => $choices,
             ]);
         });
     }

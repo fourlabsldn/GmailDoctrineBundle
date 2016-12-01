@@ -253,7 +253,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFlagged(): bool
     {
@@ -261,7 +261,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     }
 
     /**
-     * @param boolean $flagged
+     * @param bool $flagged
      */
     public function setFlagged(bool $flagged)
     {
