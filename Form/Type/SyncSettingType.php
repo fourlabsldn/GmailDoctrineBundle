@@ -54,7 +54,7 @@ class SyncSettingType extends AbstractType
                     $choices[$emails[0]] = $userId;
                 }
             }
-            $event->getForm()->add('userIdsDisplayedOnInbox', ChoiceType::class, [
+            $event->getForm()->add('userIdsCurrentlyFlagged', ChoiceType::class, [
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'Display On Inbox',

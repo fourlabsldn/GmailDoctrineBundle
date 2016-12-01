@@ -61,9 +61,7 @@ class GoogleClientStatusWrapper
             (is_array($syncSetting->getUserIds())) &&
             (count($syncSetting->getUserIds())) &&
             (is_array($syncSetting->getUserIdsAvailableAsFromAddress())) &&
-            (count($syncSetting->getUserIdsAvailableAsFromAddress())) &&
-            (is_array($syncSetting->getUserIdsDisplayedOnInbox())) &&
-            (count($syncSetting->getUserIdsDisplayedOnInbox()))
+            (count($syncSetting->getUserIdsAvailableAsFromAddress()))
         ) {
             return true;
         }
@@ -84,9 +82,7 @@ class GoogleClientStatusWrapper
             (is_array($syncSetting->getUserIds())) &&
             (count($syncSetting->getUserIds())) &&
             (is_array($syncSetting->getUserIdsAvailableAsFromAddress())) &&
-            (count($syncSetting->getUserIdsAvailableAsFromAddress())) &&
-            (is_array($syncSetting->getUserIdsDisplayedOnInbox())) &&
-            (count($syncSetting->getUserIdsDisplayedOnInbox()))
+            (count($syncSetting->getUserIdsAvailableAsFromAddress()))
         ) {
             return true;
         }

@@ -3,6 +3,7 @@
 namespace FL\GmailDoctrineBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use FL\GmailDoctrineBundle\Form\Type\FromType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -23,6 +24,8 @@ class SyncSetting
     protected $domain;
 
     /**
+     * User Ids being synced
+     *
      * @ORM\Column(type="array", nullable=false)
      * @Assert\NotBlank()
      *
@@ -31,13 +34,20 @@ class SyncSetting
     protected $userIds;
 
     /**
+     * Whenever a new instance of @see GmailMessage is created,
+     * if the message's userId is in $userIdsCurrentlyFlagged,
+     * the message should be marked as flagged.
+     *
      * @ORM\Column(type="array", nullable=true)
      *
      * @var string[]
      */
-    protected $userIdsDisplayedOnInbox;
+    protected $userIdsCurrentlyFlagged;
 
     /**
+     * When sending an email using @see FromType, only addresses corresponding to
+     * $userIdsAvailableAsFromAddress will be available as choices.
+     *
      * @ORM\Column(type="array", nullable=true)
      *
      * @var string[]
@@ -87,9 +97,9 @@ class SyncSetting
     /**
      * @return array|null
      */
-    public function getUserIdsDisplayedOnInbox()
+    public function getUserIdsCurrentlyFlagged()
     {
-        return $this->userIdsDisplayedOnInbox;
+        return $this->userIdsCurrentlyFlagged;
     }
 
     /**
@@ -97,9 +107,9 @@ class SyncSetting
      *
      * @return SyncSetting
      */
-    public function setUserIdsDisplayedOnInbox(array $userIds = null): SyncSetting
+    public function setUserIdsCurrentlyFlagged(array $userIds = null): SyncSetting
     {
-        $this->userIdsDisplayedOnInbox = $userIds;
+        $this->userIdsCurrentlyFlagged = $userIds;
 
         return $this;
     }
@@ -125,7 +135,7 @@ class SyncSetting
     }
 
     /**
-     * Every id in @see SyncSetting::$userIdsDisplayedOnInbox
+     * Every id in @see SyncSetting::$userIdsCurrentlyFlagged
      * must be in @see SyncSetting::$userIds
      * Every id in @see SyncSetting::$userIdsAvailableAsFromAddress
      * must be in @see SyncSetting::$userIds
@@ -134,7 +144,7 @@ class SyncSetting
      */
     public function correctUserIds()
     {
-        $this->userIdsDisplayedOnInbox = array_intersect($this->userIdsDisplayedOnInbox, $this->userIds);
+        $this->userIdsCurrentlyFlagged = array_intersect($this->userIdsCurrentlyFlagged, $this->userIds);
         $this->userIdsAvailableAsFromAddress = array_intersect($this->userIdsAvailableAsFromAddress, $this->userIds);
     }
 }
