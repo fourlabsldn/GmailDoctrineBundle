@@ -13,6 +13,7 @@ class GmailMessageRepository extends EntityRepository
     /**
      * @see GmailMessageRepository::uniqueByThreadPartials()
      *
+     * @param bool|null     $flagged
      * @param int|null      $limit
      * @param int|null      $offset
      * @param string|null   $dateSort
@@ -25,6 +26,7 @@ class GmailMessageRepository extends EntityRepository
      * @return GmailMessageInterface[]
      */
     public function findUniqueByThread(
+        bool $flagged = null,
         int $limit = null,
         int $offset = null,
         string $dateSort = null,
@@ -34,7 +36,7 @@ class GmailMessageRepository extends EntityRepository
         string $from = null,
         string $to = null
     ) {
-        $partials = $this->uniqueByThreadPartials($limit, $offset, $dateSort, $domain, $userId, $labelNames, $from, $to);
+        $partials = $this->uniqueByThreadPartials($flagged, $limit, $offset, $dateSort, $domain, $userId, $labelNames, $from, $to);
 
         $dql = sprintf(
             'SELECT message, labels
@@ -48,7 +50,7 @@ class GmailMessageRepository extends EntityRepository
 
         // passing labelNames as null here ensures each message is hydrated with all its labels
         // the label filtering was already done in partials
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $domain, $userId, null, $from, $to);
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $flagged, $domain, $userId, null, $from, $to);
 
         if (count($partials) > 0) {
             $dql .= ' AND ( ';
@@ -77,6 +79,7 @@ class GmailMessageRepository extends EntityRepository
     /**
      * @see GmailMessageRepository::uniqueByThreadPartials()
      *
+     * @param bool|null     $flagged
      * @param string|null   $domain
      * @param string|null   $userId
      * @param string[]|null $labelNames
@@ -86,16 +89,18 @@ class GmailMessageRepository extends EntityRepository
      * @return int
      */
     public function countUniqueByThread(
+        bool $flagged = null,
         string $domain = null,
         string $userId = null,
         array $labelNames = null,
         string $from = null,
         string $to = null
     ) {
-        return count($this->uniqueByThreadPartials(null, null, null, $domain, $userId, $labelNames, $from, $to));
+        return count($this->uniqueByThreadPartials($flagged, null, null, null, $domain, $userId, $labelNames, $from, $to));
     }
 
     /**
+     * @param bool|null     $flagged
      * @param int|null      $limit
      * @param int|null      $offset
      * @param string|null   $dateSort   ('ASC', 'DESC', null)
@@ -123,6 +128,7 @@ class GmailMessageRepository extends EntityRepository
      * With indexes, the time complexity for partials is P(log[N]) = numberOfPartials(log[numberOfMessagesInTable])
      */
     protected function uniqueByThreadPartials(
+        bool $flagged = null,
         int $limit = null,
         int $offset = null,
         string $dateSort = null,
@@ -142,7 +148,8 @@ class GmailMessageRepository extends EntityRepository
         $parameters = [];
         $nextParameterKey = 0;
 
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $domain, $userId, $labelNames, $from, $to);
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $flagged, $domain, $userId, $labelNames, $from, $to
+        );
         $dql .= ' GROUP BY message.threadId, message.userId, labels.userId ';
 
         $this->uniqueByThreadSortClause($dql, 'latestSentAt', $dateSort);
@@ -167,6 +174,7 @@ class GmailMessageRepository extends EntityRepository
      * @param string      $dql
      * @param array       $parameters
      * @param int         $nextParameterKey
+     * @param bool|null   $flagged
      * @param string|null $domain
      * @param string|null $userId
      * @param array|null  $labelNames
@@ -177,17 +185,23 @@ class GmailMessageRepository extends EntityRepository
         string &$dql,
         array &$parameters,
         int &$nextParameterKey,
+        bool $flagged = null,
         string $domain = null,
         string $userId = null,
         array $labelNames = null,
         string $from = null,
-        string $to = null)
-    {
+        string $to = null
+    ) {
         /*
          * If no where statements are created, append 'WHERE true=true' to the $dql
          * such that 'AND' statements can be appended safely  to the $dql
          */
-        $dql .= ' WHERE true=true AND '; //
+        $dql .= ' WHERE true=true AND ';
+        if (is_bool($flagged)) {
+            $dql .= sprintf(' message.flagged = ?%d  AND ', $nextParameterKey);
+            $parameters[] = $flagged;
+            ++$nextParameterKey;
+        }
         if (is_array($labelNames) && count($labelNames) > 0) {
             $dql .= sprintf(' labels.name IN (?%d)  AND ', $nextParameterKey);
             $parameters[] = $labelNames;
