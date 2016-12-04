@@ -41,11 +41,18 @@ class SyncSettingType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('userIds', InboxType::class, [
-            'multiple' => true,
-            'expanded' => true,
-            'label' => 'Sync',
-        ]);
+        $builder
+            ->add('userIds', InboxType::class, [
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Sync',
+            ])
+            ->add('userIdsAvailableAsFromAddress', InboxType::class, [
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Send from',
+            ]);
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $choices = [];
             if ($event->getForm()->get('userIds')->getData()) {
@@ -60,12 +67,6 @@ class SyncSettingType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'In inbox',
-                'choices' => $choices,
-            ]);
-            $event->getForm()->add('userIdsAvailableAsFromAddress', ChoiceType::class, [
-                'multiple' => true,
-                'expanded' => true,
-                'label' => 'Send from',
                 'choices' => $choices,
             ]);
         });
