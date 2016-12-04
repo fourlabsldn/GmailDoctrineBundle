@@ -41,7 +41,7 @@ class CleanUpMessagesListener
      *
      * We will be removing entities for these userIds, but doctrine doesn't encourage doing this in the same flush
      *
-     * @link http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preupdate
+     * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#preupdate
      * "PREUPDATE: Changes to associations of the updated entity are never allowed in this event, since Doctrine cannot guarantee to correctly handle
      * referential integrity at this point of the flush operation. This event has a powerful feature however, it is executed with a PreUpdateEventArgs
      * instance, which contains a reference to the computed change-set of this entity."
@@ -49,7 +49,7 @@ class CleanUpMessagesListener
      * A good way around this is to do another flush later.
      * The trade-off is that we lose the atomicity of doing things in one flush.
      * I.e. if there is a power cut between the two flushes... the second flush won't execute
-     * @link http://stackoverflow.com/questions/16904462/adding-additional-persist-calls-to-preupdate-call-in-symfony-2-1#answer-16906067
+     * @see http://stackoverflow.com/questions/16904462/adding-additional-persist-calls-to-preupdate-call-in-symfony-2-1#answer-16906067
      */
     private $removeTheseUserIds = [];
 

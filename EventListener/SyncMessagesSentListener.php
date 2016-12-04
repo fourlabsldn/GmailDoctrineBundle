@@ -7,7 +7,7 @@ use FL\GmailDoctrineBundle\Services\SyncWrapper;
 /**
  * Class SyncMessagesSentListener.
  *
- * @link http://stackoverflow.com/questions/18033210/logging-swiftmailer-send-activity-in-symfony2
+ * @see http://stackoverflow.com/questions/18033210/logging-swiftmailer-send-activity-in-symfony2
  */
 class SyncMessagesSentListener implements \Swift_Events_SendListener
 {

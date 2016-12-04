@@ -119,11 +119,11 @@ class GmailMessageRepository extends EntityRepository
      *               ]
      *               ThreadIds may or may not collide across userIds, play it safe!
      *
-     * @link http://stackoverflow.com/questions/25198394/are-gmail-thread-ids-unique-across-users
+     * @see http://stackoverflow.com/questions/25198394/are-gmail-thread-ids-unique-across-users
      *
      * If there are a lot of threads, look to optimize this query
      * E.g. index the columns={"thread_id", "user_id", "sent_at"} in your GmailMessage entity
-     * @link http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/annotations-reference.html#annref-index
+     * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/annotations-reference.html#annref-index
      *
      * With indexes, the time complexity for partials is P(log[N]) = numberOfPartials(log[numberOfMessagesInTable])
      */

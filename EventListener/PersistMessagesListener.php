@@ -86,7 +86,6 @@ class PersistMessagesListener
 
         /** @var GmailMessage $message */
         foreach ($event->getMessageCollection()->getMessages() as $message) {
-
             /** @var GmailLabel $label */
             foreach ($message->getLabels() as $label) {
                 // substitute labels already in the db
