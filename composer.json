@@ -26,7 +26,6 @@
     "symfony/routing": "~2.8|~3.0|~3.1",
     "symfony/doctrine-bridge": "~2.8|~3.0|~3.1",
     "doctrine/orm": "~2.5",
-    "doctrine/common": "~2.5",
     "html2text/html2text": "^4.0.1",
     "fourlabs/gmail-bundle": "*.*@dev"
   },
