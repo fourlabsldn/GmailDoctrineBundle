@@ -45,6 +45,7 @@ class PersistHistoryListener
         $newHistory = $event->getHistory();
         $entityManager = $this->entityManager;
 
+        // not necessary to find by domain, because userIds are globally unique
         $oldHistory = $this->historyRepository->findOneBy(['userId' => $newHistory->getUserId()]);
 
         if (

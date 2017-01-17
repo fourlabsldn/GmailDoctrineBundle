@@ -61,5 +61,7 @@ class SyncCommand extends Command
         }
 
         $output->writeln('Finished...');
+
+        return;
     }
 }

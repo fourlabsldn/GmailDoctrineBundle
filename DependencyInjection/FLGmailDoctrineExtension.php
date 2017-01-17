@@ -18,7 +18,6 @@ class FLGmailDoctrineExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('fl_gmail_doctrine.sync_setting_class', $config['sync_setting_class']);
-        $container->setParameter('fl_gmail_doctrine.credentials_class', $config['credentials_class']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

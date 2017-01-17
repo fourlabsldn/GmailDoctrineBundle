@@ -13,8 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class SyncWrapper.
- *
  * @see \FL\GmailBundle\Services\SyncGmailIds
  * @see \FL\GmailBundle\Services\SyncMessages
  */
@@ -91,22 +89,20 @@ class SyncWrapper
     }
 
     /**
+     * Syncs all users (if configured at @see SyncSetting::$userIds).
+     *
      * @param int $syncLimitPerUser
      */
     public function sync(int $syncLimitPerUser)
     {
-        $domain = $this->oAuth->resolveDomain();
-        $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
-
-        if (!($syncSetting instanceof SyncSetting)) {
-            return;
-        }
-        foreach ($syncSetting->getUserIds() as $userId) {
+        foreach ($this->directory->resolveUserIds() as $userId) {
             $this->syncByUserId($userId, $syncLimitPerUser);
         }
     }
 
     /**
+     * Syncs user by email (if configured at @see SyncSetting::$userIds).
+     *
      * @param string $email
      * @param $syncLimit
      */
@@ -117,13 +113,24 @@ class SyncWrapper
     }
 
     /**
+     * Syncs user by userId (if configured by @see SyncSetting::$userIds).
+     *
      * @param string $userId
      * @param int    $syncLimit
      */
     public function syncByUserId(string $userId, int $syncLimit)
     {
-        $this->syncGmailIdsByUserId($userId);
-        $this->syncMessagesByUserId($userId, $syncLimit);
+        $domain = $this->oAuth->resolveDomain();
+        $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
+
+        if (!($syncSetting instanceof SyncSetting)) {
+            return;
+        }
+
+        if (in_array($userId, $syncSetting->getUserIds())) {
+            $this->syncGmailIdsByUserId($userId);
+            $this->syncMessagesByUserId($userId, $syncLimit);
+        }
     }
 
     /**

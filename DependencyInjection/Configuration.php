@@ -25,9 +25,6 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('sync_setting_class')
                     ->cannotBeEmpty()
                 ->end()
-                ->scalarNode('credentials_class')
-                    ->cannotBeEmpty()
-                ->end()
             ->end()
         ;
 

@@ -53,6 +53,7 @@ class SyncSettingType extends AbstractType
                 'label' => 'Send from',
             ]);
 
+        // Populate userIdsCurrentlyFlagged with currently selected userIds
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $choices = [];
             if ($event->getForm()->get('userIds')->getData()) {

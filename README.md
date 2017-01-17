@@ -15,13 +15,9 @@ GmailDoctrineBundle provides you a Doctrine implementation of [GmailBundle](http
 
 ```
 // app/config/config.yml
-
-fl_gmail:
-    credentials_storage_service: fl_gmail_doctrine.credentials_storage
     
 fl_gmail_doctrine:
   sync_setting_class: TriprHqBundle\Entity\GmailSyncSetting
-  credentials_class: TriprHqBundle\Entity\GmailCredentials
 ```
 
 ## Setup
@@ -50,9 +46,6 @@ class GmailSyncSetting extends SyncSetting
 
 ### Why GmailDoctrineBundle?
 
-- Provides implementation of `credentials_storage_service`, required by [GmailBundle](https://github.com/fourlabsldn/GmailBundle). 
-    - See more at `FL\GmailDoctrineBundle\Storage\CredentialsStorage`
-    - See more at `Resources/config/services/storage.yml`
 - A sync command, i.e. `php bin/console fl:gmail_doctrine:sync`
 - Event Listeners, that will save what we fetch from Google into the database. See more at the `EventListener` folder.
 - `FL\GmailDoctrineBundle\Entity\SyncSetting` entity:
@@ -63,11 +56,8 @@ class GmailSyncSetting extends SyncSetting
     - See corresponding form, `FL\GmailDoctrineBundle\Form\Type\OutgoingEmailType`.
     - From field, according to what you have enabled through `FL\GmailDoctrineBundle\Entity\SyncSetting`.
 - `FL\GmailDoctrineBundle\Services\GoogleClientStatusWrapper` is a wrapper for `FL\GmailBundle\Services\GoogleClientStatus`.
-    - Copies the token authentication method, `GoogleClientStatusWrapper::isAuthenticated`.
+    - Copies the authentication method, `GoogleClientStatusWrapper::isAuthenticated`.
     - And two more methods `GoogleClientStatusWrapper::isSetupForDomain(string $domain)` and `GoogleClientStatusWrapper::isSetupForAtLeastOneDomain()`
-
-### Limitations
-- At the moment, this implementation assumes you are only managing one Google Apps Domain per Symfony application. 
 
 ## License
 

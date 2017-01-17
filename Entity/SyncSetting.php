@@ -135,19 +135,4 @@ class SyncSetting
 
         return $this;
     }
-
-    /**
-     * Every id in @see SyncSetting::$userIdsCurrentlyFlagged
-     * must be in @see SyncSetting::$userIds
-     * Every id in @see SyncSetting::$userIdsAvailableAsFromAddress
-     * must be in @see SyncSetting::$userIds.
-     *
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
-    public function correctUserIds()
-    {
-        $this->userIdsCurrentlyFlagged = array_intersect($this->userIdsCurrentlyFlagged, $this->userIds);
-        $this->userIdsAvailableAsFromAddress = array_intersect($this->userIdsAvailableAsFromAddress, $this->userIds);
-    }
 }

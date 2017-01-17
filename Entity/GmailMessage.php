@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 use FL\GmailBundle\Model\GmailMessage as BaseGmailMessage;
 use FL\GmailBundle\Model\GmailMessageInterface;
 use FL\GmailBundle\Model\GmailLabelInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Stores the relevant fields of Gmail Message, including its labels.
@@ -44,15 +43,14 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
      * this historyId can be useful in the event that the latest historyId is not available elsewhere.
      * In this case, the latest historyId is simply the historyId with the largest value.
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", nullable=false)
      *
      * @var string
      */
     protected $historyId;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotNull
+     * @ORM\Column(type="string", nullable=false)
      *
      * @var string
      */
@@ -62,7 +60,6 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
      * The default column name `to` will cause an SQL syntax error.
      *
      * @ORM\Column(name="to_", type="string", nullable=false)
-     * @Assert\NotNull
      *
      * @var string
      */
@@ -70,7 +67,6 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotNull
      *
      * @var string
      */
@@ -80,7 +76,6 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
      * The default column name `from` will cause an SQL syntax error.
      *
      * @ORM\Column(name="from_", type="string", nullable=false)
-     * @Assert\NotNull
      *
      * @var string
      */
@@ -88,7 +83,6 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotNull
      *
      * @var string
      */
@@ -96,14 +90,13 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * @ORM\Column(type="datetimetz", nullable=false)
-     * @Assert\NotNull
      *
      * @var \DateTimeInterface
      */
     protected $sentAt;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", nullable=false)
      *
      * @var string
      */
@@ -116,21 +109,21 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $labels;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
      *
      * @var string
      */
     protected $snippet;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
      *
      * @var string
      */
     protected $bodyPlainText;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=false)
      *
      * @var string
      */
@@ -138,11 +131,10 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotBlank()
      *
      * @var string
      */
-    protected $domain = '';
+    protected $domain;
 
     /**
      *  @see SyncSetting::$userIdsCurrentlyFlagged
@@ -152,9 +144,6 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
      */
     protected $flagged = false;
 
-    /**
-     * GmailMessage constructor.
-     */
     public function __construct()
     {
         $this->labels = new ArrayCollection();
@@ -197,7 +186,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabels()
+    public function getLabels(): \Traversable
     {
         return $this->labels;
     }
@@ -240,18 +229,6 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
         }
 
         return;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasLabel(string $name): bool
-    {
-        if ($this->getLabelByName($name) instanceof GmailLabelInterface) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

@@ -78,7 +78,11 @@ class PersistMessagesListener
         $persistedLabels = new GmailLabelCollection();
         foreach ($event->getLabelCollection()->getLabels() as $label) {
             /* @var GmailLabel $label */
-            $existingLabel = $this->labelRepository->findOneBy(['name' => $label->getName(), 'userId' => $label->getUserId()]);
+            $existingLabel = $this->labelRepository->findOneBy([
+                'name' => $label->getName(),
+                'userId' => $label->getUserId(),
+                //'domain' => $label->getDomain() // not necessary because userIds are unique
+            ]);
             if ($existingLabel instanceof GmailLabel) {
                 $persistedLabels->addLabel($existingLabel);
             }

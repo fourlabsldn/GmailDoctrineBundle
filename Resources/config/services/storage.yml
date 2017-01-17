@@ -1,7 +1,0 @@
-services:
-    fl_gmail_doctrine.credentials_storage:
-        class: FL\GmailDoctrineBundle\Storage\CredentialsStorage
-        arguments:
-            - "@doctrine.orm.entity_manager"
-            - "%fl_gmail_doctrine.credentials_class%"
-

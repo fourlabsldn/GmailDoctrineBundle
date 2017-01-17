@@ -4,7 +4,6 @@ namespace FL\GmailDoctrineBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FL\GmailBundle\Model\GmailLabel as BaseLabel;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -28,7 +27,6 @@ class GmailLabel extends BaseLabel
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotNull
      *
      * @var string
      */
@@ -36,7 +34,13 @@ class GmailLabel extends BaseLabel
 
     /**
      * @ORM\Column(type="string", nullable=false)
-     * @Assert\NotNull
+     *
+     * @var string
+     */
+    protected $domain;
+
+    /**
+     * @ORM\Column(type="string", nullable=false)
      *
      * @var string
      */
