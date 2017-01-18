@@ -59,14 +59,18 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * The default column name `to` will cause an SQL syntax error.
      *
-     * @ORM\Column(name="to_", type="string", nullable=false)
+     * When there are A LOT of recipients, type string might not be big enough.
+     *
+     * @ORM\Column(name="to_", type="text", nullable=false)
      *
      * @var string
      */
     protected $to;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * When there are A LOT of recipients, type string might not be big enough.
+     *
+     * @ORM\Column(type="text", nullable=false)
      *
      * @var string
      */
