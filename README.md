@@ -50,7 +50,11 @@ class GmailSyncSetting extends SyncSetting
     - Example `php bin/console fl:gmail_doctrine:sync --mode=both --limit_messages_per_user=100`.
     - Required Option `mode`: Can be `gmail_ids`, `gmail_messages`, or `both`.
     - Option `limit_messages_per_user`: Required for `mode=gmail_ids` or `mode=both`. Must be a positive integer.
-    - Suggestion: a limit of 300 message per user, should prevent you from hitting google throttling.
+    - Suggestion: allow enough space between syncs so that you don't sync the same messages twice. Messages won't be saved to the database twice, but you might experience throttling.
+    - Note: Messages are requested in batch, 45 at a time. Each batch request takes about 2 seconds.
+    - Suggestion: Set a limit of 315 message per user. `7 batches * 2 seconds per batch = 14 seconds`. This means you must leave at least `14 * number of users` seconds between requests.
+
+
 - Event Listeners, that will save what we fetch from Google into the database. See more at the `EventListener` folder.
 - `FL\GmailDoctrineBundle\Entity\SyncSetting` entity:
     - Allows you to pick which email inboxes you want to sync, and send email from.
