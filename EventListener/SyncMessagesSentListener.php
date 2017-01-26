@@ -40,7 +40,7 @@ class SyncMessagesSentListener implements \Swift_Events_SendListener
         $fromString = property_exists($evt, 'fromEmailAddress') ? $evt->fromEmailAddress : '';
 
         if (!empty($fromString)) {
-            $this->syncWrapper->syncEmail($fromString, 5);
+            $this->syncWrapper->syncEmail($fromString, 30, SyncWrapper::MODE_SYNC_ALL);
         }
     }
 }

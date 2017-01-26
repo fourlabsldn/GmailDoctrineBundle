@@ -19,6 +19,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class SyncWrapper
 {
+    const MODE_SYNC_GMAIL_IDS = 0;
+    const MODE_SYNC_GMAIL_MESSAGES = 1;
+    const MODE_SYNC_ALL = 2;
+    const MODES = [
+        self::MODE_SYNC_GMAIL_IDS,
+        self::MODE_SYNC_GMAIL_MESSAGES,
+        self::MODE_SYNC_ALL,
+    ];
+
+
     /**
      * @var SyncGmailIds
      */
@@ -90,37 +100,44 @@ class SyncWrapper
     }
 
     /**
-     * Syncs all users (if configured at @see SyncSetting::$userIds).
+     * Syncs gmailIds and messages for all users (if configured at @see SyncSetting::$userIds).
      *
      * @param int $syncLimitPerUser
+     * @param int $mode
      */
-    public function sync(int $syncLimitPerUser)
+    public function sync(int $syncLimitPerUser, int $mode)
     {
         foreach ($this->directory->resolveUserIds() as $userId) {
-            $this->syncByUserId($userId, $syncLimitPerUser);
+            $this->syncByUserId($userId, $syncLimitPerUser, $mode);
         }
     }
 
     /**
-     * Syncs user by email (if configured at @see SyncSetting::$userIds).
+     * Syncs gmailIds and messages for a user, by email (if configured at @see SyncSetting::$userIds).
      *
      * @param string $email
-     * @param $syncLimit
+     * @param int    $syncLimit
+     * @param int    $mode
      */
-    public function syncEmail(string $email, int $syncLimit)
+    public function syncEmail(string $email, int $syncLimit, int $mode)
     {
         $userId = $this->directory->resolveUserIdFromEmail($email, Directory::MODE_RESOLVE_PRIMARY_PLUS_ALIASES);
-        $this->syncByUserId($userId, $syncLimit);
+        $this->syncByUserId($userId, $syncLimit, $mode);
     }
 
     /**
-     * Syncs user by userId (if configured by @see SyncSetting::$userIds).
+     * Syncs gmailIds and messages for a user, by userId (if configured by @see SyncSetting::$userIds).
      *
      * @param string $userId
      * @param int    $syncLimit
+     * @param int    $mode
      */
-    public function syncByUserId(string $userId, int $syncLimit)
+    public function syncByUserId(string $userId, int $syncLimit, int $mode)
     {
+        if (!in_array($mode, self::MODES)) {
+            throw new \InvalidArgumentException();
+        }
+
         $domain = $this->oAuth->resolveDomain();
         $syncSetting = $this->syncSettingRepository->findOneByDomain($domain);
 
@@ -129,8 +146,20 @@ class SyncWrapper
         }
 
         if (in_array($userId, $syncSetting->getUserIds())) {
-            $this->syncGmailIdsByUserId($userId);
-            $this->syncMessagesByUserId($userId, $syncLimit);
+            return;
+        }
+
+        switch ($mode) {
+            case self::MODE_SYNC_GMAIL_IDS:
+                $this->syncGmailIdsByUserId($userId);
+                break;
+            case self::MODE_SYNC_GMAIL_MESSAGES:
+                $this->syncMessagesByUserId($userId, $syncLimit);
+                break;
+            case self::MODE_SYNC_ALL:
+                $this->syncGmailIdsByUserId($userId);
+                $this->syncMessagesByUserId($userId, $syncLimit);
+                break;
         }
     }
 
