@@ -2,6 +2,7 @@
 
 namespace FL\GmailDoctrineBundle\Services;
 
+use FL\GmailBundle\Model\GmailIds;
 use FL\GmailBundle\Model\GmailIdsInterface;
 use FL\GmailBundle\Services\SyncGmailIds;
 use FL\GmailBundle\Services\SyncMessages;
@@ -154,24 +155,17 @@ class SyncWrapper
     {
         $persistedGmailIds = $this->gmailIdsRepository->findOneByUserId($userId);
         if ($persistedGmailIds instanceof  GmailIdsInterface) {
-            $allIdsToSync = $persistedGmailIds->getGmailIds();
-            $idsToSyncRightNow = $persistedGmailIds->getGmailIds($syncLimit);
-
             /*
              * Note: we are depending on getGmailIds having the latest $idsToSyncRightNow at the start
              * such that we are syncing the latest messages first.
              * This is important, such that when we call syncs after sending emails, or making updates
              * we update the latest thing that happened.
              */
-            $persistedGmailIds->setGmailIds($idsToSyncRightNow);
-            $this->syncMessages->syncFromGmailIds($persistedGmailIds);
-
-            // be careful with the ordering in array_diff
-            $idsToSyncLater = array_diff($allIdsToSync, $idsToSyncRightNow);
-            $persistedGmailIds->setGmailIds(is_array($idsToSyncLater) ? $idsToSyncLater : []);
-            $this->entityManager->persist($persistedGmailIds);
+            $gmailIdsObject = (new GmailIds())
+                ->setDomain($persistedGmailIds->getDomain())
+                ->setGmailIds($persistedGmailIds->getGmailIds($syncLimit))
+                ->setUserId($persistedGmailIds->getUserId());
+            $this->syncMessages->syncFromGmailIds($gmailIdsObject);
         }
-
-        $this->entityManager->flush();
     }
 }

@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FL\GmailBundle\Event\GmailSyncMessagesEvent;
 use FL\GmailBundle\Model\Collection\GmailLabelCollection;
+use FL\GmailBundle\Model\GmailIdsInterface;
 use FL\GmailBundle\Services\OAuth;
 use FL\GmailDoctrineBundle\Entity\GmailLabel;
 use FL\GmailDoctrineBundle\Entity\GmailMessage;
@@ -38,6 +39,11 @@ class PersistMessagesListener
     private $syncSettingRepository;
 
     /**
+     * @var EntityRepository
+     */
+    private $gmailIdsRepository;
+
+    /**
      * @var string
      */
     private $domain;
@@ -47,6 +53,7 @@ class PersistMessagesListener
      * @param string                 $messageClass
      * @param string                 $labelClass
      * @param string                 $syncSettingClass
+     * @param string                 $gmailIdsClass
      * @param OAuth                  $oAuth
      */
     public function __construct(
@@ -54,12 +61,14 @@ class PersistMessagesListener
         string $messageClass,
         string $labelClass,
         string $syncSettingClass,
+        string $gmailIdsClass,
         OAuth $oAuth
     ) {
         $this->entityManager = $entityManager;
         $this->messageRepository = $entityManager->getRepository($messageClass);
         $this->labelRepository = $entityManager->getRepository($labelClass);
         $this->syncSettingRepository = $entityManager->getRepository($syncSettingClass);
+        $this->gmailIdsRepository = $entityManager->getRepository($gmailIdsClass);
         $this->domain = $oAuth->resolveDomain();
     }
 
@@ -114,6 +123,15 @@ class PersistMessagesListener
                 }
                 $this->entityManager->persist($message);
             }
+        }
+
+        // Update GmailIds for this user, so that ids that were synced aren't synced again
+        $persistedGmailIds = $this->gmailIdsRepository->findOneByUserId($event->getUserId());
+        if ($persistedGmailIds instanceof  GmailIdsInterface) {
+            // be careful with the ordering in array_diff
+            $idsToSyncLater = array_diff($persistedGmailIds->getGmailIds(), $event->getGmailIds());
+            $persistedGmailIds->setGmailIds(is_array($idsToSyncLater) ? $idsToSyncLater : []);
+            $this->entityManager->persist($persistedGmailIds);
         }
 
         $this->entityManager->flush();
