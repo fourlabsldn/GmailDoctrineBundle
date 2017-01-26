@@ -22,6 +22,7 @@ services:
             - "%fl_gmail.gmail_message_class%"
             - "%fl_gmail.gmail_label_class%"
             - "%fl_gmail_doctrine.sync_setting_class%"
+            - "%fl_gmail.gmail_ids_class%"
             - "@fl_gmail.oauth"
         tags:
             - { name: kernel.event_listener, event: fl_gmail.sync.messages, method: onGmailSyncMessages }
