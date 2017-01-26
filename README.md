@@ -46,7 +46,11 @@ class GmailSyncSetting extends SyncSetting
 
 ### Why GmailDoctrineBundle?
 
-- A sync command, i.e. `php bin/console fl:gmail_doctrine:sync`
+- A sync command that lets you sync gmailIds, gmailMessages, or both. i.e.  with two options: 
+    - Example `php bin/console fl:gmail_doctrine:sync --mode=both --limit_messages_per_user=100`.
+    - Required Option `mode`: Can be `gmail_ids`, `gmail_messages`, or `both`.
+    - Option `limit_messages_per_user`: Required for `mode=gmail_ids` or `mode=both`. Must be a positive integer.
+    - Suggestion: a limit of 300 message per user, should prevent you from hitting google throttling.
 - Event Listeners, that will save what we fetch from Google into the database. See more at the `EventListener` folder.
 - `FL\GmailDoctrineBundle\Entity\SyncSetting` entity:
     - Allows you to pick which email inboxes you want to sync, and send email from.
