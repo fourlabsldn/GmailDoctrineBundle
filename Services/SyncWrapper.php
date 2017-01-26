@@ -28,7 +28,6 @@ class SyncWrapper
         self::MODE_SYNC_ALL,
     ];
 
-
     /**
      * @var SyncGmailIds
      */
