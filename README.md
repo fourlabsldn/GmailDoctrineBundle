@@ -53,8 +53,7 @@ class GmailSyncSetting extends SyncSetting
     - Suggestion: allow enough space between syncs so that you don't sync the same messages twice. Messages won't be saved to the database twice, but you might experience throttling.
     - Note: Messages are requested in batch, 45 at a time. Each batch request takes about 2 seconds.
     - Suggestion: Set a limit of 315 message per user. `7 batches * 2 seconds per batch = 14 seconds`. This means you must leave at least `14 * number of users` seconds between requests.
-
-
+    - Note: Before running the sync for `both`, make sure to run the sync for `gmail_ids` at least once.
 - Event Listeners, that will save what we fetch from Google into the database. See more at the `EventListener` folder.
 - `FL\GmailDoctrineBundle\Entity\SyncSetting` entity:
     - Allows you to pick which email inboxes you want to sync, and send email from.
