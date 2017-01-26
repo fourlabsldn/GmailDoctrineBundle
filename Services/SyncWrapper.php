@@ -144,7 +144,7 @@ class SyncWrapper
             return;
         }
 
-        if (in_array($userId, $syncSetting->getUserIds())) {
+        if (!in_array($userId, $syncSetting->getUserIds())) {
             return;
         }
 
