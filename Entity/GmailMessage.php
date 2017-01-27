@@ -11,6 +11,7 @@ use FL\GmailBundle\Model\GmailLabelInterface;
 
 /**
  * Stores the relevant fields of Gmail Message, including its labels.
+ * Most sql columns are of type text because we never know what an email might contain.
  *
  * @ORM\MappedSuperclass
  */
@@ -79,14 +80,14 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     /**
      * The default column name `from` will cause an SQL syntax error.
      *
-     * @ORM\Column(name="from_", type="string", nullable=false)
+     * @ORM\Column(name="from_", type="text", nullable=false)
      *
      * @var string
      */
     protected $from;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="text", nullable=false)
      *
      * @var string
      */
@@ -100,7 +101,7 @@ class GmailMessage extends BaseGmailMessage implements GmailMessageInterface
     protected $sentAt;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="text", nullable=false)
      *
      * @var string
      */
