@@ -3,6 +3,7 @@
 namespace FL\GmailDoctrineBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use FL\GmailBundle\Model\GmailMessageInterface;
 
 /**
@@ -96,7 +97,37 @@ class GmailMessageRepository extends EntityRepository
         string $from = null,
         string $to = null
     ) {
-        return count($this->uniqueByThreadPartials($flagged, null, null, null, $domain, $userId, $labelNames, $from, $to));
+        $dql = sprintf(
+            'SELECT message.threadId AS thread_id, message.userId AS user_id
+            FROM %s message
+            LEFT JOIN message.labels labels ',
+            $this->getEntityName()
+        );
+
+        $parameters = [];
+        $nextParameterKey = 0;
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $flagged, $domain, $userId, $labelNames, $from, $to);
+        $query = $this->getEntityManager()->createQuery($dql);
+
+        /*
+         * Use a native query. DQL cannot do multiple distinct columns. DQL cannot do subqueries.
+         * Note that thread_id/user_id aliases get converted to thread_id_0/user_id_1.
+         */
+        $sqlQuery = sprintf('
+            SELECT COUNT(*) AS total FROM (
+                SELECT DISTINCT thread_id_0, user_id_1 FROM (
+                    %s
+                ) dql_result
+            ) count_result',
+            $query->getSQL()
+        );
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('total', 'total');
+
+        return $this->getEntityManager()
+            ->createNativeQuery($sqlQuery, $rsm)
+            ->setParameters($parameters)
+            ->getSingleScalarResult();
     }
 
     /**
@@ -148,8 +179,7 @@ class GmailMessageRepository extends EntityRepository
         $parameters = [];
         $nextParameterKey = 0;
 
-        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $flagged, $domain, $userId, $labelNames, $from, $to
-        );
+        $this->uniqueByThreadWhereClause($dql, $parameters, $nextParameterKey, $flagged, $domain, $userId, $labelNames, $from, $to);
         $dql .= ' GROUP BY message.threadId, message.userId, labels.userId ';
 
         $this->uniqueByThreadSortClause($dql, 'latestSentAt', $dateSort);
@@ -206,6 +236,11 @@ class GmailMessageRepository extends EntityRepository
             $dql .= sprintf(' labels.name IN (?%d)  AND ', $nextParameterKey);
             $parameters[] = $labelNames;
             ++$nextParameterKey;
+        }
+        // when there is an empty array of labelNames
+        // we don't return anything
+        if (is_array($labelNames) && count($labelNames) === 0) {
+            $dql .= sprintf(' message.id IS NULL ', $nextParameterKey);
         }
         if (is_string($userId)) {
             $dql .= sprintf(' message.userId = ?%d  AND ', $nextParameterKey);
