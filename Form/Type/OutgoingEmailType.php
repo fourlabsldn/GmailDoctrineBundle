@@ -22,12 +22,25 @@ class OutgoingEmailType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('from', FromType::class, ['required' => true])
-            ->add('to', TextType::class, ['required' => true])
-            ->add('subject', TextType::class, ['required' => true])
-            ->add('threadId', TextType::class, ['required' => false])
-            ->add('bodyHtml', TextareaType::class, ['required' => false])
+            ->add('from', FromType::class, [
+                'required' => true,
+                'placeholder' => 'placeholder',
+                'translation_domain' => 'form',
+            ])
+            ->add('to', TextType::class, [
+                'required' => true,
+            ])
+            ->add('subject', TextType::class, [
+                'required' => true,
+            ])
+            ->add('threadId', TextType::class, [
+                'required' => false,
+            ])
+            ->add('bodyHtml', TextareaType::class, [
+                'required' => false,
+            ])
         ;
+
         $builder->get('to')
             ->addModelTransformer(new CallbackTransformer(
                 function ($arrayValue) {
